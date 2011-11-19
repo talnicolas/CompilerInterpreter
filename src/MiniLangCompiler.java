@@ -6,6 +6,7 @@ import java.io.*;
 import semantics.*;
 import tp2.*;
 
+
 public class MiniLangCompiler {
 
     public static void main(
@@ -39,7 +40,7 @@ public class MiniLangCompiler {
         }
         catch (SemanticException e) {
             System.out.flush();
-            System.err.println("Erreur sŽmantique : " + e.getMessage());
+            System.err.println("Erreur sï¿½mantique : " + e.getMessage());
             System.exit(1);
         }
         catch (CompilerException e) {
@@ -62,7 +63,7 @@ public class MiniLangCompiler {
         catch (Exception e) {
             System.out.flush();
             e.printStackTrace();
-            System.err.println("Bogue non-anticipŽ : " + e.getMessage());
+            System.err.println("Bogue non-anticipï¿½ : " + e.getMessage());
             System.exit(1);
         }
     }
