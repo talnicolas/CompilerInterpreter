@@ -1,0 +1,26 @@
+int fact(int n) {
+  if(n == 0) {
+    return 1;
+  }
+  return n * fact(n - 1);
+}
+
+{
+  int i = 3;
+  print(i);
+  println();
+  if(false) {
+    int j = 2;
+  } else {
+    i = fact(5);
+  }
+  print("le resultat est " + string(i));
+  println();
+
+  i = 0;
+  while(i < size(args)) {
+    print(args[i]);
+    println();
+    i = i + 1;
+  }
+}

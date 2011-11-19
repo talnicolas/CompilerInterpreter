@@ -1,0 +1,108 @@
+Grammar tp2:
+
+Lexer
+
+  id = letter (letter | digit)*;
+  letter = 'a'..'z';
+  digit = '0'..'9';
+  num = digit+;
+  blank = (' ' | #13 | #10 | #9)+;
+  comment = Shortest ('/*' Any* '*/');
+
+  string = '"' str_char* '"';
+  str_char = (' ' .. '~') - '"';
+
+  Ignored
+    blank, comment;
+
+Parser
+
+  program = funs block;
+
+  funs =
+    funs fun | Empty;
+
+  fun =
+    type [name:]id [l_par:]'(' params ')' block;
+
+  params =
+    param comma_params | Empty;
+
+  comma_params =
+    comma_params [comma:]',' param | Empty;
+
+  param =
+    type id;
+
+  block =
+    [l_brace:]'{' stmts '}';
+
+  stmts =
+    stmts stmt | Empty;
+
+  stmt =
+    {decl:} type id [op:]'=' exp ';' |
+    {assign:} id [op:]'=' exp ';' |
+    {array_assign:} id [l_bracket:]'[' [index:]exp ']' [op:]'=' exp ';' |
+    {if:} [keyword:]'if' [l_par:]'(' exp ')' block opt_else |
+    {while:} [keyword:]'while' [l_par:]'(' exp ')' block |
+    {print:}  [keyword:]'print' [l_par:]'(' exp ')' ';' |
+    {println:} [keyword:]'println' [l_par:]'(' ')' ';' |
+    {return:} [keyword:]'return' opt_exp ';' |
+    {call:} id [l_par:]'(' args ')' ';';
+
+  opt_else =
+    [keyword:]'else' block | Empty;
+
+  opt_exp =
+    exp | Empty;
+
+  type =
+    {int:} [keyword:]'int' |
+    {bool:} [keyword:]'bool' |
+    {string:} [keyword:]'string' |
+    {void:} [keyword:]'void' |
+    {int_array:} [keyword:]'int' [l_bracket:]'[' ']' |
+    {bool_array:} [keyword:]'bool' [l_bracket:]'[' ']' |
+    {string_array:} [keyword:]'string' [l_bracket:]'[' ']';
+
+  exp =
+    {eq:} [left:]exp [op:]'==' [right:]exp |
+    {lt:} [left:]exp [op:]'<' [right:]exp |
+    {add:} [left:]exp [op:]'+' [right:]exp |
+    {sub:} [left:]exp [op:]'-' [right:]exp |
+    {mul:} [left:]exp [op:]'*' [right:]exp |
+    {div:} [left:]exp [op:]'/' [right:]exp |
+    {mod:} [left:]exp [op:]'%' [right:]exp |
+    {neg:} [op:]'-' term |
+    {term:} term;
+
+    Precedence
+      Left mul, div, mod;
+      Left add, sub;
+      Left eq, lt;
+
+  term =
+    {num:} num |
+    {true:} [keyword:]'true' |
+    {false:} [keyword:]'false' |
+    {string:} string |
+    {var:} id |
+    {par:} [l_par:]'(' exp ')' |
+    {call:} id [l_par:]'(' args ')' |
+    {array_ref:} id [l_bracket:]'[' exp ']' |
+    {new_int_array:} [keyword:]'new' 'int' [l_bracket:]'[' exp ']' |
+    {new_bool_array:} [keyword:]'new' 'bool' [l_bracket:]'[' exp ']' |
+    {new_string_array:} [keyword:]'new' 'string' [l_bracket:]'[' exp ']' |
+    {int_conversion:} [keyword:]'int' [l_par:]'(' exp ')' |
+    {string_conversion:} [keyword:]'string' [l_par:]'(' exp ')' |
+    {array_size:} [keyword:]'size' [l_par:]'(' id ')';
+
+  args =
+    arg comma_args | Empty;
+
+  comma_args =
+    comma_args [comma:]',' arg | Empty;
+
+  arg =
+    exp;

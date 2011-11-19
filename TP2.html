@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+
+
+<meta content="text/html; charset=UTF-8" http-equiv="content-type" /><title>TP2 INF5000 Automne 2011</title>
+
+  <meta content="Étienne Gagnon" name="author" /></head><body>
+<h1 style="text-align: center;">TP2 INF5000 Automne 2011</h1>
+L'objectif du TP est de réaliser un interpréteur et un compilateur pour
+une évolution du langage MiniLang++ qui supporte les chaînes de
+caractères,&nbsp; les tableaux, les fonctions et les procédures à zéro
+ou plus de paramères, la conversion des données et les paramètres de la
+ligne de commande.<br />
+Ce petit langage permet enfin de commencer à écrire de vrais programmes!<br />
+Vous trouverez, ci-dessous, une spécification précise de la sémantique
+voulue et des exigences particulières dans la réalisation du TP.<br />
+<h2>Grammaire</h2>
+La grammaire du langage « MiniLang++ Évolué » vous est donnée dans le fichier tp2.sablecc. Il vous est <em>interdit</em> de modifier la grammaire.<br />
+Lors de la correction, votre code sera compilé avec cette grammaire.<br />
+<h2>Commentaires</h2>
+Les commentaire à la C (<span style="font-family: monospace;">/* ... */</span>) ont été ajoutés au langage.<br />
+<h2>Chaînes de caractères</h2>
+Les chaînes de caractères ont été ajoutées de la façon suivante:<br />
+<ol>
+  <li>Les chaînes littérales ont été ajoutées (<span style="font-family: monospace;">"Hello World!"</span>). Ceci inclut la chaîne vide (<span style="font-family: monospace;">""</span>);<br />
+  </li>
+  <li>Le type <span style="font-family: monospace;">string</span> a été ajouté.</li>
+</ol>
+Une variable de type <span style="font-family: monospace;">string</span> doit toujours contenir une chaîne de caractères. Il n'existe pas de <span style="font-family: monospace;">null</span> comme en Java.<br />
+Dans les expresssions, les seules opérations permises sur les chaînes de caractère sont:<br />
+<ol>
+  <li><span style="font-family: monospace;">==</span> (test d'égalité): retourne vrai si les deux chaînes sont identiques.<br />
+  </li>
+  <li>+ (concaténation): retourne la concaténation de deux chaînes de caractères.</li>
+  <li><span style="font-family: monospace;">int()</span> (conversion en <span style="font-family: monospace;">int</span>, voir plus loin): retourne l'équivalent du <span style="font-family: monospace;">Integer.parseInt()</span> de Java. L'échec de la conversion doit mener à une erreur d'exécution normale (comme la division par zéro).<br />
+  </li>
+</ol>
+<h2>Fonctions et procédures</h2>
+Les fonctions acceptent, maintenant, zéro ou plus de paramètre. Chaque
+paramètre a son propre type. Une procédure, c'est une fonction pour
+laquelle on a mis le type de retour <span style="font-family: monospace;">void</span>.<br />
+La syntaxe de l'instruction <span style="font-family: monospace;">return</span>
+a été modifiée en conséquence: son expression est optionnelle.
+Évidemment, la sémantique impose qu'un return d'une fonction ait une
+expression, et que celui d'une procédure n'en ait pas.<br />
+Une procédure peut se terminer correctement (à l'exécution) même si <span style="font-family: monospace;">return</span> n'a pas été invoqué. Une fonction qui se termine sans avoir invoqué <span style="font-family: monospace;">return</span> cause une erreur d'exécution normale.<br />
+Afin de vous aider lors des vérifications sémantiques et de
+l'interprétation, les classes modifiées FonctionFinder et Functions
+vous sont fournies. La version modifiée collecte un tableau (<span style="font-family: monospace;">ArrayList</span>) de paramètres pour chaque fonction du programme.<br />
+L'appel d'une procédure est une instruction. L'appel d'une fonction est (normalement) une expression.<br />
+La majorité des langages de programmation permettent l'appel de
+fonction comme instruction (i.e. dans ce cas, on ignore la valeur retournée). Vous
+avez le choix de le permettre, ou non. Vous devez documenter votre
+choix.<br />
+Évidemment, lors des appels et des retours, le nombre et le type des
+valeurs doit correspondre à ce qui est attendu, sinon, une erreur doit
+être détectée lors de la vérification sémantique.<br />
+<h2>Conversions</h2>
+Deux opérations de conversions ont été ajoutées:<br />
+<pre>string s = string(3 + 2); /* s &lt;- "5" */<br />int i = int(s);           /* i &lt;- 5 */<br /></pre>
+La conversion vers string est permise sur les valeurs entières et booléennes seulement.<br />
+La conversion vers int est permise sur les
+chaînes de caractères seulement. L'échec d'une conversion cause une erreur
+d'exécution normale.<br />
+<h2>Tableaux</h2>
+Les tableaux à une dimension sont ajoutés. Il y a 3 types de tableaux: <span style="font-family: monospace;">int[]</span>, <span style="font-family: monospace;">bool[]</span> et <span style="font-family: monospace;">string[]</span>.<br />
+Un tableau est créé comme suit:<br />
+<pre>int[] ti = new int[3];<br />bool[] bi = new int[i * 2];<br />string[] si = new int[j - 1];<br /></pre>
+Tous les éléments d'un tableau sont initialisés à une valeur par défaut:<br />
+<ol>
+  <li>booléen: <span style="font-family: monospace;">false</span></li>
+  <li>entier: <span style="font-family: monospace;">0</span></li>
+  <li>chaîne de caractère: <span style="font-family: monospace;">""</span></li>
+</ol>
+L'assignation dans un tableau se fait comme suit:<br />
+<pre>ti[0] = 53 * 2;<br /></pre>
+La lecture dans un tableau se fait comme suit:<br />
+<pre>print(ti[2]);<br /></pre>
+Évidemment, les tableaux sont indexés à partir de zéro. Les éléments
+d'un tableau de 10 éléments ont les indices 0 à 9. Un accès hors bornes
+cause une erreur d'exécution normale.<br />
+L'assignation d'une variable tableau dans une autre se fait par référence (comme en Java):<br />
+<pre>int[] ti2 = ...;<br />ti = ti2;  /* maintenant, ti et ti2 réfèrent au même tableau */<br /></pre>
+Le passage d'un tableau en paramètre de fonction/procédure ou en retour se fait également par référence.<br />
+Les tableaux ne peuvent pas être soumis à aucun opérateur d'expression (<span style="font-family: monospace;">==</span>, <span style="font-family: monospace;">&lt;</span>, <span style="font-family: monospace;">+</span>, etc.).<br />
+L'opérateur <span style="font-family: monospace;">size</span> retourne la taille d'un tableau.<br />
+<h2>Paramètres sur la ligne de commande</h2>
+Lors du lancement de l'interpréteur:<br />
+<pre>java MiniLangInterpreter prog.minilang toto tata titi<br /></pre>
+les arguments qui suivent le nom de fichier du programme doivent être ajoutés dans une variable implicite de type <span style="font-family: monospace;">string[]</span> nommée <span style="font-family: monospace;">args</span>.<br />
+Dans un programme, on peut, ensuite écrire:<br />
+<pre>{<br />  int i = 0;<br />  while(i &lt; size(args)) {<br />    print(args[i]);<br />    println();<br />    i = i + 1;<br />  }<br />}<br /></pre>
+<h2>Génération de code</h2>
+Votre compilateur doit générer du code Java vers la sortie standard. Le
+code généré doit compiler sans problèmes avec un compilateur Java, sauf
+pour les exceptions suivantes:<br />
+<ol>
+  <li>Erreur de compilation Java due à un <span style="font-family: monospace;">return</span> manquant ou au code superflu qui suit un <span style="font-family: monospace;">return</span>.</li>
+  <li>Erreur de compilation Java due à une division par zéro dans le programme compilé.<br />
+  </li>
+</ol>
+La seule classe générée doit s'appeler <span style="font-family: monospace;">Main</span>. Elle doit contenir une méthode <span style="font-family: monospace;">public static void main(String[] args)</span> et possiblement d'autres méthodes statiques.<br />
+Votre compilateur doit éviter de générer du code qui contient des
+conflits de nom avec les bibliothèques et les mots réservés de Java.<br />
+
+<h2>Notation</h2>
+30% seront mis sur la vérification sémantique. 30% sur l'interpréteur.
+30% sur le compilateur. 10% seront mis sur l'élégance
+de votre code et du code généré.<br />
+<h2>Remise</h2>Les modalités précises de remise du TP2 seront
+déterminée par le
+professeur Jean Privat. Vous devez utiliser la grammaire et les classes
+fournies. Vous ne devez que remettre le code source de 3 classes:<br />
+<ol>
+  <li>semantics.SemanticVerifier</li>
+  <li>interpreter.Interpreter</li>
+  <li>generation.CodeGenerator<br />
+  </li>
+</ol>
+
+
+
+</body></html>
