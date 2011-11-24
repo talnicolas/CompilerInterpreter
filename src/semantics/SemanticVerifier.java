@@ -21,7 +21,7 @@ public class SemanticVerifier extends Walker{
 		this.functions = fun;
 	}
 
-	Type evalType(NExp node) {
+	Type evalType(Node node) {
 		node.apply(this);
 		return currentType;
 	}
@@ -30,7 +30,6 @@ public class SemanticVerifier extends Walker{
 	public void caseStmt_Call(NStmt_Call node) {
 		
 		List<NParam> params = functions.getParamList(node.get_Id());
-		
 		this.currentArgs = new ArrayList<Type>();
 		node.get_Args().applyOnChildren(this);
 		
@@ -90,7 +89,6 @@ List<NParam> params = functions.getParamList(node.get_Id());
 	}
 	
 	
-	
 	@Override
 	public void caseId(NId node) {
 		// TODO Auto-generated method stub
@@ -99,8 +97,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseString(NString node) {
-		// TODO Auto-generated method stub
-		super.caseString(node);
+		this.currentType=Type.STRING;
 	}
 
 	@Override
@@ -171,14 +168,23 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseStmt_Decl(NStmt_Decl node) {
-		// TODO Auto-generated method stub
-		super.caseStmt_Decl(node);
+		Type declaredType = ntypeToType(node.get_Type());
+		Type exprType = evalType(node.get_Exp());		
+		
+		if (declaredType!=exprType) {
+			throw new SemanticException("Types incompatibles : "+declaredType+" et "+exprType,node.get_Op());
+		}
+		currentScope.declareVar(node.get_Id(), declaredType);
 	}
 
 	@Override
 	public void caseStmt_Assign(NStmt_Assign node) {
-		// TODO Auto-generated method stub
-		super.caseStmt_Assign(node);
+		Type idType = currentScope.getType(node.get_Id());
+		Type exprType = evalType(node.get_Exp());
+		
+		if (idType!=exprType) {
+			throw new SemanticException("Types incompatibles : "+idType+" et "+exprType,node.get_Op());
+		}
 	}
 
 	@Override
@@ -201,8 +207,10 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseStmt_Print(NStmt_Print node) {
-		// TODO Auto-generated method stub
-		super.caseStmt_Print(node);
+		currentType = evalType(node.get_Exp());
+		if (currentType!=Type.INT && currentType!=Type.STRING) {
+			throw new SemanticException("Impossible d'écrire un type "+currentType.toString(), node.get_LPar());
+		}
 	}
 
 	@Override
@@ -231,26 +239,48 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseExp_Add(NExp_Add node) {
-		// TODO Auto-generated method stub
-		super.caseExp_Add(node);
+		Type leftType = evalType(node.get_Left());
+		Type rightType = evalType(node.get_Right());
+		
+		if (!(leftType == Type.STRING && rightType == Type.STRING) ||
+			!(leftType == Type.INT && rightType == Type.INT)) {
+			throw new SemanticException("Impossible d'additionner ce genre de types"+node.get_Op().toString(),node.get_Op());
+		}
+		currentType=leftType;
 	}
 
 	@Override
 	public void caseExp_Sub(NExp_Sub node) {
-		// TODO Auto-generated method stub
-		super.caseExp_Sub(node);
+		
+		Type leftType = evalType(node.get_Left());
+		Type rightType = evalType(node.get_Right());
+		
+		if (!(leftType == Type.INT && rightType == Type.INT)) {
+			throw new SemanticException("Impossible de soustraire ce genre de types"+node.get_Op().toString(),node.get_Op());
+		}
+		currentType=leftType;
 	}
 
 	@Override
 	public void caseExp_Mul(NExp_Mul node) {
-		// TODO Auto-generated method stub
-		super.caseExp_Mul(node);
+		Type leftType = evalType(node.get_Left());
+		Type rightType = evalType(node.get_Right());
+		
+		if (!(leftType == Type.INT && rightType == Type.INT)) {
+			throw new SemanticException("Impossible de multiplier ce genre de types"+node.get_Op().toString(),node.get_Op());
+		}
+		currentType=leftType;
 	}
 
 	@Override
 	public void caseExp_Div(NExp_Div node) {
-		// TODO Auto-generated method stub
-		super.caseExp_Div(node);
+		Type leftType = evalType(node.get_Left());
+		Type rightType = evalType(node.get_Right());
+		
+		if (!(leftType == Type.INT && rightType == Type.INT)) {
+			throw new SemanticException("Impossible de diviser ce genre de types"+node.get_Op().toString(),node.get_Op());
+		}	
+		currentType=leftType;
 	}
 
 	@Override
@@ -261,43 +291,40 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseExp_Neg(NExp_Neg node) {
-		// TODO Auto-generated method stub
-		super.caseExp_Neg(node);
-	}
+		Type termType = evalType(node.get_Term());	
+		if (termType != Type.INT) {
+			throw new SemanticException("Impossible d'appliquer le négatif de ce type "+node.get_Op().toString(),node.get_Op());
+		}
+		currentType=termType;
+}
 
 	@Override
 	public void caseExp_Term(NExp_Term node) {
-		// TODO Auto-generated method stub
-		super.caseExp_Term(node);
+		currentType=evalType(node.get_Term());
 	}
 
 	@Override
 	public void caseTerm_Num(NTerm_Num node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_Num(node);
+		currentType=Type.INT;
 	}
 
 	@Override
 	public void caseTerm_False(NTerm_False node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_False(node);
+		currentType=Type.BOOL;	
 	}
 
 	@Override
 	public void caseTerm_String(NTerm_String node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_String(node);
+		currentType=Type.STRING;
 	}
 
 	@Override
 	public void caseTerm_Var(NTerm_Var node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_Var(node);
+		currentType=currentScope.getType(node.get_Id());
 	}
 
 	@Override
 	public void caseTerm_Par(NTerm_Par node) {
-		// TODO Auto-generated method stub
 		super.caseTerm_Par(node);
 	}
 
