@@ -14,7 +14,7 @@ public class StringArrayValue
             int size) {
 
         this.value = new String[size];
-        for (int i = 0; i < i; i++) {
+        for (int i = 0; i < size; i++) {
             this.value[i] = "";
         }
     }

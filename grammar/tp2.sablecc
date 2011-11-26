@@ -20,16 +20,19 @@ Parser
   program = funs block;
 
   funs =
-    funs fun | Empty;
+    {many:} funs fun |
+    {none:} Empty;
 
   fun =
     type [name:]id [l_par:]'(' params ')' block;
 
   params =
-    param comma_params | Empty;
+    {many:} param comma_params |
+    {none:} Empty;
 
   comma_params =
-    comma_params [comma:]',' param | Empty;
+    {many:} comma_params [comma:]',' param |
+    {none:} Empty;
 
   param =
     type id;
@@ -38,7 +41,8 @@ Parser
     [l_brace:]'{' stmts '}';
 
   stmts =
-    stmts stmt | Empty;
+    {many:} stmts stmt |
+    {none:} Empty;
 
   stmt =
     {decl:} type id [op:]'=' exp ';' |
@@ -55,7 +59,8 @@ Parser
     [keyword:]'else' block | Empty;
 
   opt_exp =
-    exp | Empty;
+    {one:} exp |
+    {none:} Empty;
 
   type =
     {int:} [keyword:]'int' |
@@ -99,10 +104,12 @@ Parser
     {array_size:} [keyword:]'size' [l_par:]'(' id ')';
 
   args =
-    arg comma_args | Empty;
+    {many:} arg comma_args |
+    {none:} Empty;
 
   comma_args =
-    comma_args [comma:]',' arg | Empty;
+    {many:} comma_args [comma:]',' arg |
+    {none:} Empty;
 
   arg =
     exp;

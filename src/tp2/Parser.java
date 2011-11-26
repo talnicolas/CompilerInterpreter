@@ -132,8 +132,8 @@ class L_0
       ParseStack stack = parser.getStack();
 
 
-      NFuns_$2 lFuns_$2 = new NFuns_$2(-1, -1);
-      stack.push(lFuns_$2, stack.getState().getTarget(lFuns_$2));
+      NFuns_None lFuns_None = new NFuns_None(-1, -1);
+      stack.push(lFuns_None, stack.getState().getTarget(lFuns_None));
       return null;
     }
   }
@@ -294,8 +294,8 @@ class L_4
       ParseStack stack = parser.getStack();
 
 
-      NStmts_$2 lStmts_$2 = new NStmts_$2(-1, -1);
-      stack.push(lStmts_$2, stack.getState().getTarget(lStmts_$2));
+      NStmts_None lStmts_None = new NStmts_None(-1, -1);
+      stack.push(lStmts_None, stack.getState().getTarget(lStmts_None));
       return null;
     }
   }
@@ -851,8 +851,8 @@ class L_15
       ParseStack stack = parser.getStack();
 
 
-      NArgs_$2 lArgs_$2 = new NArgs_$2(-1, -1);
-      stack.push(lArgs_$2, stack.getState().getTarget(lArgs_$2));
+      NArgs_None lArgs_None = new NArgs_None(-1, -1);
+      stack.push(lArgs_None, stack.getState().getTarget(lArgs_None));
       return null;
     }
     parser.shift();
@@ -3298,8 +3298,8 @@ class L_61
       ParseStack stack = parser.getStack();
 
 
-      NCommaArgs_$2 lCommaArgs_$2 = new NCommaArgs_$2(-1, -1);
-      stack.push(lCommaArgs_$2, stack.getState().getTarget(lCommaArgs_$2));
+      NCommaArgs_None lCommaArgs_None = new NCommaArgs_None(-1, -1);
+      stack.push(lCommaArgs_None, stack.getState().getTarget(lCommaArgs_None));
       return null;
     }
   }
@@ -3344,8 +3344,8 @@ class L_62
       NCommaArgs lCommaArgs = (NCommaArgs) stack.pop();
       NArg lArg = (NArg) stack.pop();
 
-      NArgs_$1 lArgs_$1 = new NArgs_$1(-1, -1, lArg, lCommaArgs);
-      stack.push(lArgs_$1, stack.getState().getTarget(lArgs_$1));
+      NArgs_Many lArgs_Many = new NArgs_Many(-1, -1, lArg, lCommaArgs);
+      stack.push(lArgs_Many, stack.getState().getTarget(lArgs_Many));
       return null;
     }
     parser.shift();
@@ -3449,8 +3449,8 @@ class L_64
       N$2 lComma = (N$2) stack.pop();
       NCommaArgs lCommaArgs = (NCommaArgs) stack.pop();
 
-      NCommaArgs_$1 lCommaArgs_$1 = new NCommaArgs_$1(-1, -1, lCommaArgs, lComma, lArg);
-      stack.push(lCommaArgs_$1, stack.getState().getTarget(lCommaArgs_$1));
+      NCommaArgs_Many lCommaArgs_Many = new NCommaArgs_Many(-1, -1, lCommaArgs, lComma, lArg);
+      stack.push(lCommaArgs_Many, stack.getState().getTarget(lCommaArgs_Many));
       return null;
     }
   }
@@ -4203,8 +4203,8 @@ class L_78
       ParseStack stack = parser.getStack();
 
 
-      NArgs_$2 lArgs_$2 = new NArgs_$2(-1, -1);
-      stack.push(lArgs_$2, stack.getState().getTarget(lArgs_$2));
+      NArgs_None lArgs_None = new NArgs_None(-1, -1);
+      stack.push(lArgs_None, stack.getState().getTarget(lArgs_None));
       return null;
     }
     parser.shift();
@@ -5380,8 +5380,8 @@ class L_104
       ParseStack stack = parser.getStack();
 
 
-      NOptExp_$2 lOptExp_$2 = new NOptExp_$2(-1, -1);
-      stack.push(lOptExp_$2, stack.getState().getTarget(lOptExp_$2));
+      NOptExp_None lOptExp_None = new NOptExp_None(-1, -1);
+      stack.push(lOptExp_None, stack.getState().getTarget(lOptExp_None));
       return null;
     }
     parser.shift();
@@ -5552,8 +5552,8 @@ class L_107
 
       NExp lExp = (NExp) stack.pop();
 
-      NOptExp_$1 lOptExp_$1 = new NOptExp_$1(-1, -1, lExp);
-      stack.push(lOptExp_$1, stack.getState().getTarget(lOptExp_$1));
+      NOptExp_One lOptExp_One = new NOptExp_One(-1, -1, lExp);
+      stack.push(lOptExp_One, stack.getState().getTarget(lOptExp_One));
       return null;
     }
     parser.shift();
@@ -6011,8 +6011,8 @@ class L_118
       NStmt lStmt = (NStmt) stack.pop();
       NStmts lStmts = (NStmts) stack.pop();
 
-      NStmts_$1 lStmts_$1 = new NStmts_$1(-1, -1, lStmts, lStmt);
-      stack.push(lStmts_$1, stack.getState().getTarget(lStmts_$1));
+      NStmts_Many lStmts_Many = new NStmts_Many(-1, -1, lStmts, lStmt);
+      stack.push(lStmts_Many, stack.getState().getTarget(lStmts_Many));
       return null;
     }
   }
@@ -6309,8 +6309,8 @@ class L_125
       NFun lFun = (NFun) stack.pop();
       NFuns lFuns = (NFuns) stack.pop();
 
-      NFuns_$1 lFuns_$1 = new NFuns_$1(-1, -1, lFuns, lFun);
-      stack.push(lFuns_$1, stack.getState().getTarget(lFuns_$1));
+      NFuns_Many lFuns_Many = new NFuns_Many(-1, -1, lFuns, lFun);
+      stack.push(lFuns_Many, stack.getState().getTarget(lFuns_Many));
       return null;
     }
   }
@@ -6445,8 +6445,8 @@ class L_128
       ParseStack stack = parser.getStack();
 
 
-      NParams_$2 lParams_$2 = new NParams_$2(-1, -1);
-      stack.push(lParams_$2, stack.getState().getTarget(lParams_$2));
+      NParams_None lParams_None = new NParams_None(-1, -1);
+      stack.push(lParams_None, stack.getState().getTarget(lParams_None));
       return null;
     }
     parser.shift();
@@ -6613,8 +6613,8 @@ class L_132
       ParseStack stack = parser.getStack();
 
 
-      NCommaParams_$2 lCommaParams_$2 = new NCommaParams_$2(-1, -1);
-      stack.push(lCommaParams_$2, stack.getState().getTarget(lCommaParams_$2));
+      NCommaParams_None lCommaParams_None = new NCommaParams_None(-1, -1);
+      stack.push(lCommaParams_None, stack.getState().getTarget(lCommaParams_None));
       return null;
     }
   }
@@ -6659,8 +6659,8 @@ class L_133
       NCommaParams lCommaParams = (NCommaParams) stack.pop();
       NParam lParam = (NParam) stack.pop();
 
-      NParams_$1 lParams_$1 = new NParams_$1(-1, -1, lParam, lCommaParams);
-      stack.push(lParams_$1, stack.getState().getTarget(lParams_$1));
+      NParams_Many lParams_Many = new NParams_Many(-1, -1, lParam, lCommaParams);
+      stack.push(lParams_Many, stack.getState().getTarget(lParams_Many));
       return null;
     }
     parser.shift();
@@ -6748,8 +6748,8 @@ class L_135
       N$2 lComma = (N$2) stack.pop();
       NCommaParams lCommaParams = (NCommaParams) stack.pop();
 
-      NCommaParams_$1 lCommaParams_$1 = new NCommaParams_$1(-1, -1, lCommaParams, lComma, lParam);
-      stack.push(lCommaParams_$1, stack.getState().getTarget(lCommaParams_$1));
+      NCommaParams_Many lCommaParams_Many = new NCommaParams_Many(-1, -1, lCommaParams, lComma, lParam);
+      stack.push(lCommaParams_Many, stack.getState().getTarget(lCommaParams_Many));
       return null;
     }
   }

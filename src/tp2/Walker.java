@@ -32,6 +32,14 @@ public class Walker {
     defaultIn(node);
   }
 
+  public void inFuns_Many(NFuns_Many node) {
+    defaultIn(node);
+  }
+
+  public void inFuns_None(NFuns_None node) {
+    defaultIn(node);
+  }
+
   public void inBlock(NBlock node) {
     defaultIn(node);
   }
@@ -68,7 +76,31 @@ public class Walker {
     defaultIn(node);
   }
 
+  public void inParams_Many(NParams_Many node) {
+    defaultIn(node);
+  }
+
+  public void inParams_None(NParams_None node) {
+    defaultIn(node);
+  }
+
   public void inParam(NParam node) {
+    defaultIn(node);
+  }
+
+  public void inCommaParams_Many(NCommaParams_Many node) {
+    defaultIn(node);
+  }
+
+  public void inCommaParams_None(NCommaParams_None node) {
+    defaultIn(node);
+  }
+
+  public void inStmts_Many(NStmts_Many node) {
+    defaultIn(node);
+  }
+
+  public void inStmts_None(NStmts_None node) {
     defaultIn(node);
   }
 
@@ -144,6 +176,22 @@ public class Walker {
     defaultIn(node);
   }
 
+  public void inOptExp_One(NOptExp_One node) {
+    defaultIn(node);
+  }
+
+  public void inOptExp_None(NOptExp_None node) {
+    defaultIn(node);
+  }
+
+  public void inArgs_Many(NArgs_Many node) {
+    defaultIn(node);
+  }
+
+  public void inArgs_None(NArgs_None node) {
+    defaultIn(node);
+  }
+
   public void inTerm_Num(NTerm_Num node) {
     defaultIn(node);
   }
@@ -204,6 +252,14 @@ public class Walker {
     defaultIn(node);
   }
 
+  public void inCommaArgs_Many(NCommaArgs_Many node) {
+    defaultIn(node);
+  }
+
+  public void inCommaArgs_None(NCommaArgs_None node) {
+    defaultIn(node);
+  }
+
   public void defaultIn(Node node) {
   }
 
@@ -220,6 +276,14 @@ public class Walker {
   }
 
   public void caseProgram(NProgram node) {
+    defaultCase(node);
+  }
+
+  public void caseFuns_Many(NFuns_Many node) {
+    defaultCase(node);
+  }
+
+  public void caseFuns_None(NFuns_None node) {
     defaultCase(node);
   }
 
@@ -259,7 +323,31 @@ public class Walker {
     defaultCase(node);
   }
 
+  public void caseParams_Many(NParams_Many node) {
+    defaultCase(node);
+  }
+
+  public void caseParams_None(NParams_None node) {
+    defaultCase(node);
+  }
+
   public void caseParam(NParam node) {
+    defaultCase(node);
+  }
+
+  public void caseCommaParams_Many(NCommaParams_Many node) {
+    defaultCase(node);
+  }
+
+  public void caseCommaParams_None(NCommaParams_None node) {
+    defaultCase(node);
+  }
+
+  public void caseStmts_Many(NStmts_Many node) {
+    defaultCase(node);
+  }
+
+  public void caseStmts_None(NStmts_None node) {
     defaultCase(node);
   }
 
@@ -335,6 +423,22 @@ public class Walker {
     defaultCase(node);
   }
 
+  public void caseOptExp_One(NOptExp_One node) {
+    defaultCase(node);
+  }
+
+  public void caseOptExp_None(NOptExp_None node) {
+    defaultCase(node);
+  }
+
+  public void caseArgs_Many(NArgs_Many node) {
+    defaultCase(node);
+  }
+
+  public void caseArgs_None(NArgs_None node) {
+    defaultCase(node);
+  }
+
   public void caseTerm_Num(NTerm_Num node) {
     defaultCase(node);
   }
@@ -395,6 +499,14 @@ public class Walker {
     defaultCase(node);
   }
 
+  public void caseCommaArgs_Many(NCommaArgs_Many node) {
+    defaultCase(node);
+  }
+
+  public void caseCommaArgs_None(NCommaArgs_None node) {
+    defaultCase(node);
+  }
+
   public void defaultCase(Node node) {
     node.applyOnChildren(this);
   }
@@ -412,6 +524,14 @@ public class Walker {
   }
 
   public void outProgram(NProgram node) {
+    defaultOut(node);
+  }
+
+  public void outFuns_Many(NFuns_Many node) {
+    defaultOut(node);
+  }
+
+  public void outFuns_None(NFuns_None node) {
     defaultOut(node);
   }
 
@@ -451,7 +571,31 @@ public class Walker {
     defaultOut(node);
   }
 
+  public void outParams_Many(NParams_Many node) {
+    defaultOut(node);
+  }
+
+  public void outParams_None(NParams_None node) {
+    defaultOut(node);
+  }
+
   public void outParam(NParam node) {
+    defaultOut(node);
+  }
+
+  public void outCommaParams_Many(NCommaParams_Many node) {
+    defaultOut(node);
+  }
+
+  public void outCommaParams_None(NCommaParams_None node) {
+    defaultOut(node);
+  }
+
+  public void outStmts_Many(NStmts_Many node) {
+    defaultOut(node);
+  }
+
+  public void outStmts_None(NStmts_None node) {
     defaultOut(node);
   }
 
@@ -527,6 +671,22 @@ public class Walker {
     defaultOut(node);
   }
 
+  public void outOptExp_One(NOptExp_One node) {
+    defaultOut(node);
+  }
+
+  public void outOptExp_None(NOptExp_None node) {
+    defaultOut(node);
+  }
+
+  public void outArgs_Many(NArgs_Many node) {
+    defaultOut(node);
+  }
+
+  public void outArgs_None(NArgs_None node) {
+    defaultOut(node);
+  }
+
   public void outTerm_Num(NTerm_Num node) {
     defaultOut(node);
   }
@@ -584,6 +744,14 @@ public class Walker {
   }
 
   public void outArg(NArg node) {
+    defaultOut(node);
+  }
+
+  public void outCommaArgs_Many(NCommaArgs_Many node) {
+    defaultOut(node);
+  }
+
+  public void outCommaArgs_None(NCommaArgs_None node) {
     defaultOut(node);
   }
 
