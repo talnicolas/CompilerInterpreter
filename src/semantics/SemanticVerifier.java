@@ -1,6 +1,5 @@
 package semantics;
 
-import interpreter.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -172,7 +171,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 		Type exprType = evalType(node.get_Exp());		
 		
 		if (declaredType!=exprType) {
-			throw new SemanticException("Types incompatibles : "+declaredType+" et "+exprType,node.get_Op());
+			throw new SemanticException("Types incompatibles : " + declaredType + " et " + exprType,node.get_Op());
 		}
 		currentScope.declareVar(node.get_Id(), declaredType);
 	}
@@ -183,7 +182,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 		Type exprType = evalType(node.get_Exp());
 		
 		if (idType!=exprType) {
-			throw new SemanticException("Types incompatibles : "+idType+" et "+exprType,node.get_Op());
+			throw new SemanticException("Types incompatibles : " + idType + " et " + exprType,node.get_Op());
 		}
 	}
 
@@ -209,7 +208,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 	public void caseStmt_Print(NStmt_Print node) {
 		currentType = evalType(node.get_Exp());
 		if (currentType!=Type.INT && currentType!=Type.STRING) {
-			throw new SemanticException("Impossible d'écrire un type "+currentType.toString(), node.get_LPar());
+			throw new SemanticException("Impossible d'écrire un type " + currentType.toString(), node.get_LPar());
 		}
 	}
 
@@ -244,7 +243,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 		
 		if (!(leftType == Type.STRING && rightType == Type.STRING) ||
 			!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible d'additionner ce genre de types"+node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible d'additionner ce genre de types: " + node.get_Op().toString(),node.get_Op());
 		}
 		currentType=leftType;
 	}
@@ -256,7 +255,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 		Type rightType = evalType(node.get_Right());
 		
 		if (!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible de soustraire ce genre de types"+node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible de soustraire ce genre de types: " + node.get_Op().toString(),node.get_Op());
 		}
 		currentType=leftType;
 	}
@@ -267,7 +266,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 		Type rightType = evalType(node.get_Right());
 		
 		if (!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible de multiplier ce genre de types"+node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible de multiplier ce genre de types: " + node.get_Op().toString(),node.get_Op());
 		}
 		currentType=leftType;
 	}
@@ -278,7 +277,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 		Type rightType = evalType(node.get_Right());
 		
 		if (!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible de diviser ce genre de types"+node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible de diviser ce genre de types: " + node.get_Op().toString(),node.get_Op());
 		}	
 		currentType=leftType;
 	}
@@ -293,7 +292,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 	public void caseExp_Neg(NExp_Neg node) {
 		Type termType = evalType(node.get_Term());	
 		if (termType != Type.INT) {
-			throw new SemanticException("Impossible d'appliquer le négatif de ce type "+node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible d'appliquer le négatif de ce type: " + node.get_Op().toString(),node.get_Op());
 		}
 		currentType=termType;
 }
