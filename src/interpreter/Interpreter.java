@@ -10,7 +10,6 @@ import exception.SemanticException;
 import semantics.Functions;
 import semantics.SemanticScope;
 import semantics.Type;
-import sun.org.mozilla.javascript.internal.EvaluatorException;
 import tp2.*;
 
 public class Interpreter extends Walker {
