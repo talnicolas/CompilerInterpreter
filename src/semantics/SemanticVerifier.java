@@ -18,6 +18,7 @@ public class SemanticVerifier extends Walker{
 	
 	public SemanticVerifier(Functions fun) {
 		this.functions = fun;
+		currentScope=new SemanticScope(null);
 	}
 
 	Type evalType(Node node) {
@@ -88,11 +89,6 @@ List<NParam> params = functions.getParamList(node.get_Id());
 	}
 	
 	
-	@Override
-	public void caseId(NId node) {
-		// TODO Auto-generated method stub
-		super.caseId(node);
-	}
 
 	@Override
 	public void caseString(NString node) {
@@ -194,14 +190,18 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseStmt_If(NStmt_If node) {
-		// TODO Auto-generated method stub
-		super.caseStmt_If(node);
+		currentType= evalType(node.get_Exp());
+		if (currentType==Type.BOOL){
+			super.walkChildren(node);
+		}
 	}
 
 	@Override
 	public void caseStmt_While(NStmt_While node) {
-		// TODO Auto-generated method stub
-		super.caseStmt_While(node);
+		currentType= evalType(node.get_Exp());
+		if (currentType==Type.BOOL){
+			super.walkChildren(node);
+		}
 	}
 
 	@Override
@@ -226,14 +226,27 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseExp_Eq(NExp_Eq node) {
-		// TODO Auto-generated method stub
-		super.caseExp_Eq(node);
+		Type leftType = evalType(node.get_Left());
+		Type rightType = evalType(node.get_Right());
+		
+		if (!(leftType == Type.STRING && rightType == Type.STRING) ||
+			!(leftType == Type.BOOL && rightType == Type.BOOL) ||
+			!(leftType == Type.INT && rightType == Type.INT)) {
+			throw new SemanticException("Impossible de comparer ce genre de types: " + node.get_Op().toString(),node.get_Op());
+		}
+		currentType=Type.BOOL;
 	}
 
 	@Override
 	public void caseExp_Lt(NExp_Lt node) {
-		// TODO Auto-generated method stub
-		super.caseExp_Lt(node);
+		Type leftType = evalType(node.get_Left());
+		Type rightType = evalType(node.get_Right());
+		
+		if (!(leftType == Type.INT && rightType == Type.INT)) {
+			throw new SemanticException("Impossible de comparer ce genre de types: " + node.get_Op().toString(),node.get_Op());
+		}
+		
+		currentType=Type.BOOL;
 	}
 
 	@Override
@@ -241,9 +254,9 @@ List<NParam> params = functions.getParamList(node.get_Id());
 		Type leftType = evalType(node.get_Left());
 		Type rightType = evalType(node.get_Right());
 		
-		if (!(leftType == Type.STRING && rightType == Type.STRING) ||
+		if (!(leftType == Type.STRING && rightType == Type.STRING) &&
 			!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible d'additionner ce genre de types: " + node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible d'additionner ce genre de types: " + leftType + rightType,node.get_Op());
 		}
 		currentType=leftType;
 	}

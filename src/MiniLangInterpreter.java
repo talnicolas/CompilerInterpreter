@@ -27,6 +27,7 @@ public class MiniLangInterpreter {
 
             new SemanticVerifier(functions).walk(syntaxTree);
 
+            System.out.println("vérification terminée");	
             String[] arguments = new String[args.length - 1];
             System.arraycopy(args, 1, arguments, 0, args.length - 1);
             new Interpreter(functions, arguments).walk(syntaxTree);
