@@ -2,8 +2,6 @@ package interpreter;
 
 import java.util.ArrayList;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
-
 import exception.InterpreterException;
 import exception.SemanticException;
 
