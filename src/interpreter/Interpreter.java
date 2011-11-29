@@ -3,12 +3,9 @@ package interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
-import exception.InternalException;
 import exception.InterpreterException;
-import exception.SemanticException;
 
 import semantics.Functions;
-import semantics.SemanticScope;
 import semantics.Type;
 import tp2.*;
 
@@ -371,41 +368,5 @@ public class Interpreter extends Walker {
 	public void walk(Node node) {
 		// TODO Auto-generated method stub
 		super.walk(node);
-	}
-	
-	/**
-	 * Convert NType parameters to Type
-	 * @param ntype
-	 * @return the corresponding Type
-	 */
-	private Type ntypeToType(NType ntype) {
-		Type res;
-		switch(ntype.getType()){
-		case T_Type_Int :
-			res = Type.INT;
-			break;
-		case T_Type_Bool : 
-			res = Type.BOOL;
-			break;
-		case T_Type_String :
-			res = Type.STRING;
-			break;
-		case T_Type_Void :
-			res = Type.VOID;
-			break;
-		case T_Type_IntArray :
-			res = Type.INT_ARRAY;
-			break;
-		case T_Type_StringArray :
-			res = Type.STRING_ARRAY;
-			break;
-		case T_Type_BoolArray :
-			res = Type.BOOL_ARRAY;
-		default :
-			throw new InternalException("BUG : argument sans type");
-		}
-		return res;
-		
-	}
-
+	}	
 }
