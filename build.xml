@@ -9,6 +9,7 @@
 	
 	<property name="test.dir" value="test" />
 	<property name="output.dir" value="output" />
+	<property name="expected.dir" value="expected" />
 	<property name="test1" value="test" />
 	<property name="test2" value="test2" />
 

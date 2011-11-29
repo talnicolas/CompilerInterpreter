@@ -19,6 +19,7 @@ int fact(int n) {
   println();
 
   i = 0;
+
   while(i < size(args)) {
     print(args[i]);
     println();

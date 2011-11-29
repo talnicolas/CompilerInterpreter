@@ -1,8 +1,5 @@
 package semantics;
 
-
-import interpreter.ExecutionScope;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +18,7 @@ public class SemanticVerifier extends Walker{
 	public SemanticVerifier(Functions fun) {
 		this.functions = fun;
 		currentScope=new SemanticScope(null);
+		currentScope.declareVar(new NId("args", 0, 0), Type.STRING_ARRAY);
 	}
 
 	Type evalType(Node node) {
@@ -225,7 +223,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 	public void caseStmt_Print(NStmt_Print node) {
 		currentType = evalType(node.get_Exp());
 		if (currentType!=Type.INT && currentType!=Type.STRING) {
-			throw new SemanticException("Impossible d'écrire un type " + currentType.toString(), node.get_LPar());
+			throw new SemanticException("Impossible d'écrire un type : " + currentType.toString(), node.get_LPar());
 		}
 	}
 
@@ -426,14 +424,12 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseTerm_ArraySize(NTerm_ArraySize node) {
-		currentType = currentScope.getType(node.get_Id());
-		
-		if (currentType!=Type.BOOL_ARRAY &&
-			currentType!=Type.INT_ARRAY && 
-			currentType!=Type.STRING_ARRAY) {
-			throw new SemanticException("Impossible d'appliquer l'opérateur size sur ce type : "+currentType, node.get_LPar());
+
+		currentType = currentScope.getType(node.get_Id());		
+		if(currentType != Type.STRING_ARRAY && currentType != Type.BOOL_ARRAY && currentType != Type.INT_ARRAY) {
+			throw new SemanticException("La méthode size() prend obligatoirement un tableau en argument : " + currentType, node.get_LPar());
 		}
-		currentType=Type.INT;
+		currentType = Type.INT;
 	}
 
 	@Override
