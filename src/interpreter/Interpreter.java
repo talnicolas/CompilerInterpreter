@@ -294,10 +294,10 @@ public class Interpreter extends Walker {
 		super.caseTerm_NewBoolArray(node);
 	}
 
-@Override
-public void caseFun(NFun node) {
-	
-}
+	@Override
+	public void caseFun(NFun node) {
+			
+	}
 
 	@Override
 	public void caseTerm_NewStringArray(NTerm_NewStringArray node) {
@@ -352,7 +352,6 @@ public void caseFun(NFun node) {
 	public void caseArg(NArg node) {
 		this.currentArgs.add(eval(node.get_Exp()));
 	}
-
 	
 	@Override
 	public void caseCommaArgs_Many(NCommaArgs_Many node) {
@@ -360,20 +359,15 @@ public void caseFun(NFun node) {
 		super.caseCommaArgs_Many(node);
 	}
 
-
-
 	@Override
 	public void caseCommaArgs_None(NCommaArgs_None node) {
 		// TODO Auto-generated method stub
 		super.caseCommaArgs_None(node);
 	}
 
-
-
 	@Override
 	public void walk(Node node) {
 		// TODO Auto-generated method stub
 		super.walk(node);
 	}
-
 }
