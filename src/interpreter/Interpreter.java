@@ -298,14 +298,39 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseTerm_IntConversion(NTerm_IntConversion node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_IntConversion(node);
+		currentResult = eval(node.get_Exp());
+		
+		if (currentResult.getType()==Type.STRING) {
+			String value= ((StringValue)currentResult).getValue();
+			
+			try {
+				currentResult=new IntValue(Integer.parseInt(value));
+			} catch (NumberFormatException ex) {
+				throw new InterpreterException("Problème lors de la conversion en int de : "+value+".",node.get_LPar()); 
+			}
+		}
+		
+		
 	}
 
 	@Override
 	public void caseTerm_StringConversion(NTerm_StringConversion node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_StringConversion(node);
+		currentResult = eval(node.get_Exp());
+		
+		if (currentResult.getType()==Type.INT) {
+			int value= ((IntValue)currentResult).getValue();
+			currentResult=new StringValue(String.valueOf(value));
+		}
+		
+		else if (currentResult.getType()==Type.BOOL) {
+			boolean value = ((BoolValue)currentResult).getValue();
+			if (value) {
+				currentResult=new StringValue("Vrai");
+			}
+			else {
+				currentResult=new StringValue("Faux");
+			}
+		}
 	}
 
 	@Override

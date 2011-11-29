@@ -382,14 +382,21 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseTerm_IntConversion(NTerm_IntConversion node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_IntConversion(node);
+		currentType= evalType(node.get_Exp());
+		if (currentType!=Type.STRING) {
+			throw new SemanticException("Impossible de convertir ce type en int : " + currentType,node.get_LPar());
+		}
+
+		currentType=Type.INT;
 	}
 
 	@Override
 	public void caseTerm_StringConversion(NTerm_StringConversion node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_StringConversion(node);
+		currentType= evalType(node.get_Exp());
+		if (currentType!=Type.INT && currentType!=Type.BOOL) {
+			throw new SemanticException("Impossible de convertir ce type en string : " + currentType,node.get_LPar());
+		}
+		currentType=Type.STRING;
 	}
 
 	@Override
