@@ -33,16 +33,15 @@
 
 	<target name="run" depends="jar">
 		<mkdir dir="${output.dir}" />
-		<echo message="Executing : ${test1}" />
-		<java jar="${jar.dir}/${main.interpreter}.jar" output="${output.dir}/${test1}" fork="true">
-			<arg value="${test.dir}/${test1}" />
-		</java>
-		<echo message="Executing : ${test2}" />
-		<java jar="${jar.dir}/${main.interpreter}.jar" output="${output.dir}/${test2}" fork="true">
-			<arg value="${test.dir}/${test2}" />
-		</java>
-		<echo message="Executing : java -jar ${jar.dir}/${main.compiler}.jar" />
-		<java jar="${jar.dir}/${main.compiler}.jar" fork="true" />
+		<apply executable="java">
+			<fileset dir="${test.dir}" />
+			<arg value="-jar"/>
+			<arg path="${jar.dir}/${main.interpreter}.jar" />
+			<srcfile />
+			<redirector>
+				<outputmapper id="out" type="glob" from="*" to="${output.dir}/*" />
+			</redirector>
+		</apply>
 	</target>
 	
 	<target name="clean">
@@ -51,5 +50,6 @@
 	</target>
 
 	<target name="main" depends="clean,run" />
+
 
 </project>
