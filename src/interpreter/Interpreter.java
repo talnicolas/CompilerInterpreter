@@ -3,6 +3,7 @@ package interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
+import exception.InternalException;
 import exception.InterpreterException;
 import exception.SemanticException;
 
@@ -20,7 +21,8 @@ public class Interpreter extends Walker {
 
 	public Interpreter(Functions functions, String[] arguments) {
 		this.functions = functions;
-		this.currentScope = new ExecutionScope(null);
+		this.currentScope = new ExecutionScope(null);		
+		this.currentScope.declareArgs(arguments);
 	}
 
 	Value eval(Node node) {
@@ -48,7 +50,7 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseString(NString node) {
-		currentResult = new StringValue(node.getText());
+		currentResult = new StringValue(node.getText().replace("\"", ""));
 	}
 
 	@Override
@@ -335,8 +337,17 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseTerm_ArraySize(NTerm_ArraySize node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_ArraySize(node);
+		Type tmpType = eval(node.get_Id()).getType();
+		if(tmpType == Type.STRING_ARRAY) {
+			StringArrayValue tmpString = (StringArrayValue)eval(node.get_Id());
+			this.currentResult = new IntValue(tmpString.size()); 
+		} else if(tmpType == Type.INT_ARRAY) {
+			IntArrayValue tmpInt = (IntArrayValue)eval(node.get_Id());
+			this.currentResult = new IntValue(tmpInt.size()); 
+		} else if(tmpType == Type.BOOL_ARRAY) {
+			BoolArrayValue tmpBool = (BoolArrayValue)eval(node.get_Id());
+			this.currentResult = new IntValue(tmpBool.size()); 
+		}
 	}
 
 	@Override
@@ -360,6 +371,41 @@ public class Interpreter extends Walker {
 	public void walk(Node node) {
 		// TODO Auto-generated method stub
 		super.walk(node);
+	}
+	
+	/**
+	 * Convert NType parameters to Type
+	 * @param ntype
+	 * @return the corresponding Type
+	 */
+	private Type ntypeToType(NType ntype) {
+		Type res;
+		switch(ntype.getType()){
+		case T_Type_Int :
+			res = Type.INT;
+			break;
+		case T_Type_Bool : 
+			res = Type.BOOL;
+			break;
+		case T_Type_String :
+			res = Type.STRING;
+			break;
+		case T_Type_Void :
+			res = Type.VOID;
+			break;
+		case T_Type_IntArray :
+			res = Type.INT_ARRAY;
+			break;
+		case T_Type_StringArray :
+			res = Type.STRING_ARRAY;
+			break;
+		case T_Type_BoolArray :
+			res = Type.BOOL_ARRAY;
+		default :
+			throw new InternalException("BUG : argument sans type");
+		}
+		return res;
+		
 	}
 
 }
