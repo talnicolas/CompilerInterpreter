@@ -1,6 +1,31 @@
+int test(int a) {
+int l=2;
+print(l+a);
+}
+
 {
  int i = 3;
  i = i + 2;
  print(i);
+ println();
+ 
+ int j = 25;
+ 
+ test(j+5);
+ 
+ if (j==1) {
+ j=j+1;
+ }
+ else {
+  int k = 4;
+    print(k);
+ j=j+3;
+ }
+
+ while (j<10) {
+ j=j+1;
+ }
+ 
+ print(j);
  println();
 }

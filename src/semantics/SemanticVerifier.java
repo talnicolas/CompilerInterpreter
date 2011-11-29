@@ -1,6 +1,8 @@
 package semantics;
 
 
+import interpreter.ExecutionScope;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,7 @@ public class SemanticVerifier extends Walker{
 			if(argType != paramType) {
 				throw new SemanticException("Type incorrect pour l'appel de la fonction. ", node.get_LPar());
 			}
+		
 		}
 		
 	}
@@ -72,7 +75,10 @@ List<NParam> params = functions.getParamList(node.get_Id());
 			if(argType != paramType) {
 				throw new SemanticException("Type incorrect pour l'appel de la fonction. ", node.get_LPar());
 			}
+			
 		}
+		
+	
 		/*
 		 * VERIFIER TYPE RETOUR DE LA FONCTION
 		 */
@@ -89,7 +95,6 @@ List<NParam> params = functions.getParamList(node.get_Id());
 	}
 	
 	
-
 	@Override
 	public void caseString(NString node) {
 		this.currentType=Type.STRING;
@@ -103,14 +108,25 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseBlock(NBlock node) {
-		// TODO Auto-generated method stub
-		super.caseBlock(node);
+		SemanticScope parent=currentScope;
+		currentScope=new SemanticScope(parent);
+		walkChildren(node.get_Stmts());
+		currentScope=parent;
 	}
 
 	@Override
 	public void caseFun(NFun node) {
-		// TODO Auto-generated method stub
-		super.caseFun(node);
+		SemanticScope parentScope=currentScope;
+		currentScope=new SemanticScope(null);
+		
+		List<NParam> params = functions.getParamList(node.get_Name());
+		for (NParam param : params) {
+			currentScope.declareVar(param.get_Id(),ntypeToType(param.get_Type()));
+		}
+		
+		walkChildren(node.get_Block());
+		currentScope=parentScope;
+		
 	}
 
 	@Override
@@ -229,10 +245,10 @@ List<NParam> params = functions.getParamList(node.get_Id());
 		Type leftType = evalType(node.get_Left());
 		Type rightType = evalType(node.get_Right());
 		
-		if (!(leftType == Type.STRING && rightType == Type.STRING) ||
-			!(leftType == Type.BOOL && rightType == Type.BOOL) ||
+		if (!(leftType == Type.STRING && rightType == Type.STRING) &&
+			!(leftType == Type.BOOL && rightType == Type.BOOL) &&
 			!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible de comparer ce genre de types: " + node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible de comparer ce genre de types: " + leftType +" et " + rightType,node.get_Op());
 		}
 		currentType=Type.BOOL;
 	}
@@ -337,7 +353,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseTerm_Par(NTerm_Par node) {
-		super.caseTerm_Par(node);
+		currentType=evalType(node.get_Exp());
 	}
 
 	@Override

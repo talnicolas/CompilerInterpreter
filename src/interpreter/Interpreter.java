@@ -1,6 +1,7 @@
 package interpreter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import exception.InterpreterException;
 import exception.SemanticException;
@@ -13,7 +14,7 @@ import tp2.*;
 public class Interpreter extends Walker {
 
 	private Functions functions;
-	private ArrayList<Type> currentArgs;
+	private ArrayList<Value> currentArgs;
 	private ExecutionScope currentScope;
 	private Value currentResult;
 	
@@ -25,6 +26,14 @@ public class Interpreter extends Walker {
 	Value eval(Node node) {
 		node.apply(this);
 		return currentResult;
+	}
+	
+	@Override
+	public void caseBlock(NBlock node) {
+		ExecutionScope parent=currentScope;
+		currentScope=new ExecutionScope(parent);
+		walkChildren(node.get_Stmts());
+		currentScope=parent;		
 	}
 	
 	@Override
@@ -44,6 +53,7 @@ public class Interpreter extends Walker {
 	}
 
 
+	
 	@Override
 	public void caseStmt_Decl(NStmt_Decl node) {
 		currentResult=eval(node.get_Exp());
@@ -71,7 +81,7 @@ public class Interpreter extends Walker {
 			walkChildren(node.get_Block());
 		}
 		
-		else if (currentResult==BoolValue.FALSE) {
+		else if (currentResult==BoolValue.FALSE && node.get_OptElse()!=null) {
 			walkChildren(node.get_OptElse());
 		}
 	}
@@ -82,7 +92,7 @@ public class Interpreter extends Walker {
 	public void caseStmt_While(NStmt_While node) {
 		currentResult=eval(node.get_Exp()); 
 		while (currentResult==BoolValue.TRUE) {
-			walk(node.get_Block());
+			walkChildren(node.get_Block());
 			currentResult=eval(node.get_Exp()); 
 		}
 	}
@@ -104,8 +114,19 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseStmt_Call(NStmt_Call node) {
-		// TODO Auto-generated method stub
-		super.caseStmt_Call(node);
+		ExecutionScope parentScope=currentScope;
+		ExecutionScope newScope = new ExecutionScope(null);
+		
+		List<NParam> params = functions.getParamList(node.get_Id());
+		this.currentArgs=new ArrayList<Value>();
+		node.get_Args().applyOnChildren(this);
+
+		for(int i = 0; i < params.size(); i++) {
+		newScope.declareVar(params.get(i).get_Id(), currentArgs.get(i));
+	}
+		currentScope=newScope;	
+		walkChildren(functions.getFunction(node.get_Id()).get_Block());
+		currentScope=parentScope;	
 	}
 
 	@Override
@@ -137,7 +158,7 @@ public class Interpreter extends Walker {
 			IntValue leftExp=(IntValue) eval(node.get_Left());
 			IntValue rightExp= (IntValue) eval(node.get_Right());
 			
-			if (leftExp.getValue()>rightExp.getValue()) currentResult=BoolValue.TRUE;
+			if (leftExp.getValue()<rightExp.getValue()) currentResult=BoolValue.TRUE;
 			else currentResult=BoolValue.FALSE;
 		
 	}
@@ -232,16 +253,26 @@ public class Interpreter extends Walker {
 	}
 
 	@Override
-	public void caseTerm_Var(NTerm_Var node) {
-		
+	public void caseTerm_Var(NTerm_Var node) {		
 		currentResult=currentScope.getValue(node.get_Id());
 	}
 
 
 	@Override
 	public void caseTerm_Call(NTerm_Call node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_Call(node);
+		ExecutionScope parentScope=currentScope;
+		currentScope=new ExecutionScope(null);
+		
+		List<NParam> params = functions.getParamList(node.get_Id());
+		this.currentArgs=new ArrayList<Value>();
+		node.get_Args().applyOnChildren(this);
+		
+
+		for(int i = 0; i < params.size(); i++) {
+			currentScope.declareVar(params.get(i).get_Id(), currentArgs.get(i));
+	}
+		walkChildren(functions.getFunction(node.get_Id()).get_Block());
+		currentScope=parentScope;
 	}
 
 	@Override
@@ -263,7 +294,10 @@ public class Interpreter extends Walker {
 		super.caseTerm_NewBoolArray(node);
 	}
 
-
+@Override
+public void caseFun(NFun node) {
+	
+}
 
 	@Override
 	public void caseTerm_NewStringArray(NTerm_NewStringArray node) {
@@ -283,24 +317,18 @@ public class Interpreter extends Walker {
 		super.caseTerm_StringConversion(node);
 	}
 
-
-
 	@Override
 	public void caseTerm_ArraySize(NTerm_ArraySize node) {
 		// TODO Auto-generated method stub
 		super.caseTerm_ArraySize(node);
 	}
 
-
-
 	@Override
 	public void caseArg(NArg node) {
-		// TODO Auto-generated method stub
-		super.caseArg(node);
+		this.currentArgs.add(eval(node.get_Exp()));
 	}
 
-
-
+	
 	@Override
 	public void caseCommaArgs_Many(NCommaArgs_Many node) {
 		// TODO Auto-generated method stub
