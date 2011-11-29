@@ -10,10 +10,6 @@
 	<property name="test1" value="test" />
 	<property name="test2" value="test2" />
 
-	<target name="clean">
-		<delete dir="${build.dir}" />
-	</target>
-
 	<target name="compile">
 		<mkdir dir="${classes.dir}" />
 		<javac srcdir="${src.dir}" destdir="${classes.dir}" nowarn="on" />
@@ -45,8 +41,11 @@
 		<echo message="Executing : java -jar ${jar.dir}/${main.compiler}.jar" />
 		<java jar="${jar.dir}/${main.compiler}.jar" fork="true" />
 	</target>
+	
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
 
-	<target name="clean-build" depends="clean,jar" />
-	<target name="main" depends="clean,run" />
+	<target name="main" depends="run,clean" />
 
 </project>
