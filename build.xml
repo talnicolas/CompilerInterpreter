@@ -6,7 +6,9 @@
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="main.interpreter" value="MiniLangInterpreter" />
 	<property name="main.compiler" value="MiniLangCompiler" />
+	
 	<property name="test.dir" value="test" />
+	<property name="output.dir" value="output" />
 	<property name="test1" value="test" />
 	<property name="test2" value="test2" />
 
@@ -30,12 +32,13 @@
 	</target>
 
 	<target name="run" depends="jar">
-		<echo message="Executing : java -jar ${jar.dir}/${main.interpreter}.jar ${test.dir}/${test1}" />
-		<java jar="${jar.dir}/${main.interpreter}.jar" fork="true">
+		<mkdir dir="${output.dir}" />
+		<echo message="Executing : ${test1}" />
+		<java jar="${jar.dir}/${main.interpreter}.jar" output="${output.dir}/${test1}" fork="true">
 			<arg value="${test.dir}/${test1}" />
 		</java>
-		<echo message="Executing : java -jar ${jar.dir}/${main.interpreter}.jar ${test.dir}/${test2}" />
-		<java jar="${jar.dir}/${main.interpreter}.jar" fork="true" >
+		<echo message="Executing : ${test2}" />
+		<java jar="${jar.dir}/${main.interpreter}.jar" output="${output.dir}/${test2}" fork="true">
 			<arg value="${test.dir}/${test2}" />
 		</java>
 		<echo message="Executing : java -jar ${jar.dir}/${main.compiler}.jar" />
@@ -44,8 +47,9 @@
 	
 	<target name="clean">
 		<delete dir="${build.dir}" />
+		<delete dir="${output.dir}" />
 	</target>
 
-	<target name="main" depends="run,clean" />
+	<target name="main" depends="clean,run" />
 
 </project>
