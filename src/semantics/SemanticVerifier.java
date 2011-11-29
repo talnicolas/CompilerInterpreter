@@ -184,6 +184,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 			throw new SemanticException("Types incompatibles : " + declaredType + " et " + exprType,node.get_Op());
 		}
 		currentScope.declareVar(node.get_Id(), declaredType);
+		
 	}
 
 	@Override
@@ -311,8 +312,14 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseExp_Mod(NExp_Mod node) {
-		// TODO Auto-generated method stub
-		super.caseExp_Mod(node);
+		Type leftType = evalType(node.get_Left());
+		Type rightType = evalType(node.get_Right());
+		
+		if (!(leftType == Type.INT && rightType == Type.INT)) {
+			throw new SemanticException("Impossible de comparer ce genre de types: " + node.get_Op().toString(),node.get_Op());
+		}
+		
+		currentType=Type.BOOL;
 	}
 
 	@Override
@@ -356,26 +363,44 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseTerm_ArrayRef(NTerm_ArrayRef node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_ArrayRef(node);
+		Type arrayType=currentScope.getType(node.get_Id());
+		Type exprType = evalType(node.get_Exp());
+		
+		if (exprType!=Type.INT ){
+			throw new SemanticException("L'index n'est pas de type int : "+exprType,node.get_LBracket());
+		}
+		
+		if (arrayType==Type.BOOL_ARRAY) currentType=Type.BOOL;
+		else if (arrayType==Type.INT_ARRAY) currentType=Type.INT;
+		else if (arrayType==Type.STRING_ARRAY) currentType=Type.STRING;
+		
 	}
 
 	@Override
 	public void caseTerm_NewIntArray(NTerm_NewIntArray node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_NewIntArray(node);
+		Type typeOfExpr = evalType(node.get_Exp());	
+		if (typeOfExpr!=Type.INT) {
+			throw new SemanticException("Impossible de créer un tableau dont la taille est de ce type : "+typeOfExpr,node.get_LBracket());
+		}
+		currentType = Type.INT_ARRAY;
 	}
 
 	@Override
 	public void caseTerm_NewBoolArray(NTerm_NewBoolArray node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_NewBoolArray(node);
+		Type typeOfExpr = evalType(node.get_Exp());	
+		if (typeOfExpr!=Type.INT) {
+			throw new SemanticException("Impossible de créer un tableau dont la taille est de ce type : "+typeOfExpr,node.get_LBracket());
+		}
+		currentType = Type.BOOL_ARRAY;
 	}
 
 	@Override
 	public void caseTerm_NewStringArray(NTerm_NewStringArray node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_NewStringArray(node);
+		Type typeOfExpr = evalType(node.get_Exp());	
+		if (typeOfExpr!=Type.INT) {
+			throw new SemanticException("Impossible de créer un tableau dont la taill est de ce type : "+typeOfExpr,node.get_LBracket());
+		}
+		currentType = Type.STRING_ARRAY;
 	}
 
 	@Override
@@ -399,6 +424,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseTerm_ArraySize(NTerm_ArraySize node) {
+
 		currentType = currentScope.getType(node.get_Id());		
 		if(currentType != Type.STRING_ARRAY && currentType != Type.BOOL_ARRAY && currentType != Type.INT_ARRAY) {
 			throw new SemanticException("La méthode size() prend obligatoirement un tableau en argument : " + currentType, node.get_LPar());
