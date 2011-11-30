@@ -55,7 +55,7 @@ public class SemanticVerifier extends Walker{
 	@Override
 	public void caseTerm_Call(NTerm_Call node) {
 		
-List<NParam> params = functions.getParamList(node.get_Id());
+		List<NParam> params = functions.getParamList(node.get_Id());
 		
 		this.currentArgs = new ArrayList<Type>();
 		node.get_Args().applyOnChildren(this);
@@ -99,12 +99,6 @@ List<NParam> params = functions.getParamList(node.get_Id());
 	}
 
 	@Override
-	public void caseProgram(NProgram node) {
-		// TODO Auto-generated method stub
-		super.caseProgram(node);
-	}
-
-	@Override
 	public void caseBlock(NBlock node) {
 		SemanticScope parent=currentScope;
 		currentScope=new SemanticScope(parent);
@@ -127,53 +121,6 @@ List<NParam> params = functions.getParamList(node.get_Id());
 		
 	}
 
-	@Override
-	public void caseType_Int(NType_Int node) {
-		// TODO Auto-generated method stub
-		super.caseType_Int(node);
-	}
-
-	@Override
-	public void caseType_Bool(NType_Bool node) {
-		// TODO Auto-generated method stub
-		super.caseType_Bool(node);
-	}
-
-	@Override
-	public void caseType_String(NType_String node) {
-		// TODO Auto-generated method stub
-		super.caseType_String(node);
-	}
-
-	@Override
-	public void caseType_Void(NType_Void node) {
-		// TODO Auto-generated method stub
-		super.caseType_Void(node);
-	}
-
-	@Override
-	public void caseType_IntArray(NType_IntArray node) {
-		// TODO Auto-generated method stub
-		super.caseType_IntArray(node);
-	}
-
-	@Override
-	public void caseType_BoolArray(NType_BoolArray node) {
-		// TODO Auto-generated method stub
-		super.caseType_BoolArray(node);
-	}
-
-	@Override
-	public void caseType_StringArray(NType_StringArray node) {
-		// TODO Auto-generated method stub
-		super.caseType_StringArray(node);
-	}
-
-	@Override
-	public void caseParam(NParam node) {
-		// TODO Auto-generated method stub
-		super.caseParam(node);
-	}
 
 	@Override
 	public void caseStmt_Decl(NStmt_Decl node) {
@@ -183,8 +130,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 		if (declaredType!=exprType) {
 			throw new SemanticException("Types incompatibles : " + declaredType + " et " + exprType,node.get_Op());
 		}
-		currentScope.declareVar(node.get_Id(), declaredType);
-		
+		currentScope.declareVar(node.get_Id(), declaredType);		
 	}
 
 	@Override
@@ -199,15 +145,26 @@ List<NParam> params = functions.getParamList(node.get_Id());
 
 	@Override
 	public void caseStmt_ArrayAssign(NStmt_ArrayAssign node) {
-		// TODO Auto-generated method stub
-		super.caseStmt_ArrayAssign(node);
+		Type idType = currentScope.getType(node.get_Id());
+		Type exprType = evalType(node.get_Exp());
+		
+		if (!(idType==Type.BOOL_ARRAY && exprType==Type.BOOL) &&
+			!(idType==Type.INT_ARRAY && exprType==Type.INT) &&
+			!(idType==Type.STRING_ARRAY && exprType==Type.STRING)) {
+			throw new SemanticException("Types incompatibles : " + idType + " et " + exprType,node.get_Op());
+		}
+		
+		Type indexType = evalType(node.get_Index());
+		if (indexType!=Type.INT) {
+			throw new SemanticException("Un index doit obligatoirement être de type int, et non : " + indexType,node.get_LBracket());
+		}
 	}
 
 	@Override
 	public void caseStmt_If(NStmt_If node) {
 		currentType= evalType(node.get_Exp());
 		if (currentType==Type.BOOL){
-			super.walkChildren(node);
+			walkChildren(node);
 		}
 	}
 
@@ -215,14 +172,14 @@ List<NParam> params = functions.getParamList(node.get_Id());
 	public void caseStmt_While(NStmt_While node) {
 		currentType= evalType(node.get_Exp());
 		if (currentType==Type.BOOL){
-			super.walkChildren(node);
+			walkChildren(node);
 		}
 	}
 
 	@Override
 	public void caseStmt_Print(NStmt_Print node) {
 		currentType = evalType(node.get_Exp());
-		if (currentType!=Type.INT && currentType!=Type.STRING) {
+		if (currentType!=Type.INT && currentType!=Type.STRING && currentType!=Type.BOOL) {
 			throw new SemanticException("Impossible d'écrire un type : " + currentType.toString(), node.get_LPar());
 		}
 	}
@@ -398,7 +355,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 	public void caseTerm_NewStringArray(NTerm_NewStringArray node) {
 		Type typeOfExpr = evalType(node.get_Exp());	
 		if (typeOfExpr!=Type.INT) {
-			throw new SemanticException("Impossible de créer un tableau dont la taill est de ce type : "+typeOfExpr,node.get_LBracket());
+			throw new SemanticException("Impossible de créer un tableau dont la taille est de ce type : "+typeOfExpr,node.get_LBracket());
 		}
 		currentType = Type.STRING_ARRAY;
 	}
@@ -470,6 +427,7 @@ List<NParam> params = functions.getParamList(node.get_Id());
 			break;
 		case T_Type_BoolArray :
 			res = Type.BOOL_ARRAY;
+			break;
 		default :
 			throw new InternalException("BUG : argument sans type");
 		}

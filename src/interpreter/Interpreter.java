@@ -64,8 +64,27 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseStmt_ArrayAssign(NStmt_ArrayAssign node) {
-		// TODO Auto-generated method stub
-		super.caseStmt_ArrayAssign(node);
+		
+		Type typeArray = currentScope.getValue(node.get_Id()).getType();
+		int index = ((IntValue)eval(node.get_Index())).getValue();
+		
+		if (typeArray==Type.BOOL_ARRAY) {
+			BoolArrayValue arrayTmp = (BoolArrayValue)currentScope.getValue(node.get_Id());
+			boolean valueToSet = ((BoolValue)eval(node.get_Exp())).getValue();
+			arrayTmp.set(index, valueToSet, node.get_Op());
+		}
+		
+		else if (typeArray==Type.INT_ARRAY) {
+			IntArrayValue arrayTmp = (IntArrayValue)currentScope.getValue(node.get_Id());
+			int valueToSet = ((IntValue)eval(node.get_Exp())).getValue();
+			arrayTmp.set(index, valueToSet, node.get_Op());
+		}
+		else if (typeArray==Type.STRING_ARRAY) {
+			StringArrayValue arrayTmp = (StringArrayValue)currentScope.getValue(node.get_Id());
+			String valueToSet = ((StringValue)eval(node.get_Exp())).getValue();
+			arrayTmp.set(index, valueToSet, node.get_Op());
+		}
+		
 	}
 
 	@Override
@@ -268,20 +287,57 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseTerm_ArrayRef(NTerm_ArrayRef node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_ArrayRef(node);
+		Type tArray = currentScope.getValue(node.get_Id()).getType();
+		int index = ((IntValue)eval(node.get_Exp())).getValue();
+		
+		if (tArray == Type.BOOL_ARRAY) {
+			BoolArrayValue arrayTmp = (BoolArrayValue)currentScope.getValue(node.get_Id());
+			boolean value = arrayTmp.get(index, node.get_LBracket());
+			if (value) {
+				currentResult = BoolValue.TRUE;
+			}
+			else {
+				currentResult=BoolValue.FALSE;
+			}
+		}
+		else if (tArray == Type.INT_ARRAY) {
+			IntArrayValue arrayTmp = (IntArrayValue)currentScope.getValue(node.get_Id());
+			int value = arrayTmp.get(index, node.get_LBracket());
+			currentResult = new IntValue(value);
+		}
+		else if (tArray == Type.STRING_ARRAY) {
+			StringArrayValue arrayTmp = (StringArrayValue)currentScope.getValue(node.get_Id());
+			String value = arrayTmp.get(index, node.get_LBracket());
+			currentResult = new StringValue(value);
+		}
 	}
 
 	@Override
 	public void caseTerm_NewIntArray(NTerm_NewIntArray node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_NewIntArray(node);
+		IntValue size =(IntValue) eval(node.get_Exp());
+		if (size.getValue()>0) {
+			currentResult = new IntArrayValue(size.getValue()); 
+			for (int i = 0 ; i < size.getValue() ; i++) {
+				((IntArrayValue)currentResult).set(i, 0, node.get_LBracket());
+			}
+		}
+		else {
+			throw new InterpreterException("taille de vecteur non conforme : "+size.getValue(), node.get_LBracket());
+		}
 	}
 
 	@Override
 	public void caseTerm_NewBoolArray(NTerm_NewBoolArray node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_NewBoolArray(node);
+		IntValue size =(IntValue) eval(node.get_Exp());
+		if (size.getValue()>0) {
+			currentResult = new BoolArrayValue(size.getValue()); 
+			for (int i = 0 ; i < size.getValue() ; i++) {
+				((BoolArrayValue)currentResult).set(i, false, node.get_LBracket());
+			}
+		}
+		else {
+			throw new InterpreterException("taille de vecteur non conforme : "+size.getValue(), node.get_LBracket());
+		}
 	}
 
 	@Override
@@ -291,8 +347,16 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseTerm_NewStringArray(NTerm_NewStringArray node) {
-		// TODO Auto-generated method stub
-		super.caseTerm_NewStringArray(node);
+		IntValue size =(IntValue) eval(node.get_Exp());
+		if (size.getValue()>0) {
+			currentResult = new StringArrayValue(size.getValue()); 
+			for (int i = 0 ; i < size.getValue() ; i++) {
+				((StringArrayValue)currentResult).set(i, "", node.get_LBracket());
+			}
+		}
+		else {
+			throw new InterpreterException("taille de vecteur non conforme : "+size.getValue(), node.get_LBracket());
+		}
 	}
 
 	@Override
@@ -351,24 +415,5 @@ public class Interpreter extends Walker {
 	public void caseArg(NArg node) {
 		this.currentArgs.add(eval(node.get_Exp()));
 	}
-
-	@Override
-	public void caseCommaArgs_Many(NCommaArgs_Many node) {
-		// TODO Auto-generated method stub
-		super.caseCommaArgs_Many(node);
-	}
-
-	@Override
-	public void caseCommaArgs_None(NCommaArgs_None node) {
-		// TODO Auto-generated method stub
-		super.caseCommaArgs_None(node);
-	}
-
-	@Override
-	public void walk(Node node) {
-		// TODO Auto-generated method stub
-		super.walk(node);
-	}	
-
 
 }
