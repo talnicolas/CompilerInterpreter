@@ -10,8 +10,6 @@
 	<property name="test.dir" value="test" />
 	<property name="output.dir" value="output" />
 	<property name="expected.dir" value="expected" />
-	<property name="test1" value="test" />
-	<property name="test2" value="test2" />
 
 	<target name="compile">
 		<mkdir dir="${classes.dir}" />
@@ -34,23 +32,35 @@
 
 	<target name="run" depends="jar">
 		<mkdir dir="${output.dir}" />
-		<apply executable="java">
+		<apply executable="java" failonerror="true">
 			<fileset dir="${test.dir}" />
 			<arg value="-jar"/>
 			<arg path="${jar.dir}/${main.interpreter}.jar" />
 			<srcfile />
 			<redirector>
-				<outputmapper id="out" type="glob" from="*" to="${output.dir}/*" />
+				<outputmapper id="out" type="glob" from="*" to="${output.dir}/*.out" />
 			</redirector>
+		</apply>
+	</target>
+
+	<target name="test" depends="run">
+		<apply executable="diff" force="yes" output="result.out" append="true">
+			<fileset dir="${output.dir}" />
+			<arg value="-u" />
+			<srcfile />
+			<targetfile />
+			<mapper type="glob" from="*" to="${expected.dir}" />
 		</apply>
 	</target>
 	
 	<target name="clean">
 		<delete dir="${build.dir}" />
 		<delete dir="${output.dir}" />
+		<delete file="result.out" />
 	</target>
 
-	<target name="main" depends="clean,run" />
+	<target name="notest" depends="clean,run" />
+	<target name="main" depends="clean,test" />
 
 
 </project>
