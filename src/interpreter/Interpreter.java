@@ -112,7 +112,7 @@ public class Interpreter extends Walker {
 	@Override
 	public void caseStmt_Print(NStmt_Print node) {
 		currentResult = eval(node.get_Exp());
-		System.out.println(currentResult);
+		System.out.print(currentResult);
 	}
 
 	@Override
@@ -122,13 +122,13 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseStmt_Return(NStmt_Return node) {
-		super.walk(node);
+		currentResult = eval(node.get_OptExp());
 	}
 
 	@Override
 	public void caseStmt_Call(NStmt_Call node) {
 		ExecutionScope parentScope = currentScope;
-		ExecutionScope newScope = new ExecutionScope(null);
+		ExecutionScope newScope = new ExecutionScope(parentScope);
 
 		List<NParam> params = functions.getParamList(node.get_Id());
 		this.currentArgs = new ArrayList<Value>();
@@ -159,7 +159,7 @@ public class Interpreter extends Walker {
 		else {
 			StringValue rightExp = (StringValue) eval(node.get_Right());
 			StringValue leftExp = (StringValue) eval(node.get_Left());
-			if (leftExp == rightExp)
+			if (leftExp.getValue().equals(rightExp.getValue()))
 				currentResult = BoolValue.TRUE;
 			else
 				currentResult = BoolValue.FALSE;
@@ -272,7 +272,7 @@ public class Interpreter extends Walker {
 	@Override
 	public void caseTerm_Call(NTerm_Call node) {
 		ExecutionScope parentScope = currentScope;
-		currentScope = new ExecutionScope(null);
+		currentScope = new ExecutionScope(parentScope);
 
 		List<NParam> params = functions.getParamList(node.get_Id());
 		this.currentArgs = new ArrayList<Value>();
@@ -315,28 +315,28 @@ public class Interpreter extends Walker {
 	@Override
 	public void caseTerm_NewIntArray(NTerm_NewIntArray node) {
 		IntValue size =(IntValue) eval(node.get_Exp());
-		if (size.getValue()>0) {
+		if (size.getValue()>=0) {
 			currentResult = new IntArrayValue(size.getValue()); 
 			for (int i = 0 ; i < size.getValue() ; i++) {
 				((IntArrayValue)currentResult).set(i, 0, node.get_LBracket());
 			}
 		}
 		else {
-			throw new InterpreterException("taille de vecteur non conforme : "+size.getValue(), node.get_LBracket());
+			throw new InterpreterException("Taille de vecteur non conforme : "+size.getValue(), node.get_LBracket());
 		}
 	}
 
 	@Override
 	public void caseTerm_NewBoolArray(NTerm_NewBoolArray node) {
 		IntValue size =(IntValue) eval(node.get_Exp());
-		if (size.getValue()>0) {
+		if (size.getValue()>=0) {
 			currentResult = new BoolArrayValue(size.getValue()); 
 			for (int i = 0 ; i < size.getValue() ; i++) {
 				((BoolArrayValue)currentResult).set(i, false, node.get_LBracket());
 			}
 		}
 		else {
-			throw new InterpreterException("taille de vecteur non conforme : "+size.getValue(), node.get_LBracket());
+			throw new InterpreterException("Taille de vecteur non conforme : "+size.getValue(), node.get_LBracket());
 		}
 	}
 
@@ -348,14 +348,14 @@ public class Interpreter extends Walker {
 	@Override
 	public void caseTerm_NewStringArray(NTerm_NewStringArray node) {
 		IntValue size =(IntValue) eval(node.get_Exp());
-		if (size.getValue()>0) {
+		if (size.getValue()>=0) {
 			currentResult = new StringArrayValue(size.getValue()); 
 			for (int i = 0 ; i < size.getValue() ; i++) {
 				((StringArrayValue)currentResult).set(i, "", node.get_LBracket());
 			}
 		}
 		else {
-			throw new InterpreterException("taille de vecteur non conforme : "+size.getValue(), node.get_LBracket());
+			throw new InterpreterException("Taille de vecteur non conforme : "+size.getValue(), node.get_LBracket());
 		}
 	}
 
@@ -388,10 +388,10 @@ public class Interpreter extends Walker {
 		else if (currentResult.getType()==Type.BOOL) {
 			boolean value = ((BoolValue)currentResult).getValue();
 			if (value) {
-				currentResult=new StringValue("Vrai");
+				currentResult=new StringValue("true");
 			}
 			else {
-				currentResult=new StringValue("Faux");
+				currentResult=new StringValue("false");
 			}
 		}
 	}

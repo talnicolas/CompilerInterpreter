@@ -4,6 +4,7 @@
     print("OK");
   }
   else {
+    print("This is " + "a string");
     print("ERREUR");
   }
   println();

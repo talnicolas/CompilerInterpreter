@@ -26,7 +26,7 @@ public class MiniLangInterpreter {
             Functions functions = FunctionFinder.findFunctions(syntaxTree);
 
             new SemanticVerifier(functions).walk(syntaxTree);
-
+            
             String[] arguments = new String[args.length - 1];
             System.arraycopy(args, 1, arguments, 0, args.length - 1);
             new Interpreter(functions, arguments).walk(syntaxTree);

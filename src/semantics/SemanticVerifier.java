@@ -12,13 +12,14 @@ public class SemanticVerifier extends Walker{
 
 	private SemanticScope currentScope;
 	private Type currentType;
+	private Type functionType;
 	private Functions functions;
 	private ArrayList<Type> currentArgs;
 	
 	public SemanticVerifier(Functions fun) {
 		this.functions = fun;
 		currentScope=new SemanticScope(null);
-		currentScope.declareVar(new NId("args", 0, 0), Type.STRING_ARRAY);
+		currentScope.declareArgs();
 	}
 
 	Type evalType(Node node) {
@@ -34,7 +35,7 @@ public class SemanticVerifier extends Walker{
 		node.get_Args().applyOnChildren(this);
 		
 		if(this.currentArgs.size() != params.size()) {
-			throw new SemanticException("Nombre de parametres incorrects pour la fonction " 
+			throw new SemanticException("Nombre de parametres incorrects pour la fonction : " 
 					+ node.get_Id() + ". " + params.size() + " attendus, " + this.currentArgs.size()
 					+ " recus.", node.get_LPar());
 		}
@@ -44,9 +45,8 @@ public class SemanticVerifier extends Walker{
 			Type paramType = ntypeToType(params.get(i).get_Type());
 			
 			if(argType != paramType) {
-				throw new SemanticException("Type incorrect pour l'appel de la fonction. ", node.get_LPar());
-			}
-		
+				throw new SemanticException("Type incorrect pour l'appel de la fonction, attendu : " + paramType + ", reçu : " + argType, node.get_LPar());
+			}		
 		}
 		
 	}
@@ -61,7 +61,7 @@ public class SemanticVerifier extends Walker{
 		node.get_Args().applyOnChildren(this);
 		
 		if(this.currentArgs.size() != params.size()) {
-			throw new SemanticException("Nombre de parametres incorrects pour la fonction " 
+			throw new SemanticException("Nombre de parametres incorrects pour la fonction : " 
 					+ node.get_Id() + ". " + params.size() + " attendus, " + this.currentArgs.size()
 					+ " recus.", node.get_LPar());
 		}
@@ -71,15 +71,11 @@ public class SemanticVerifier extends Walker{
 			Type paramType = ntypeToType(params.get(i).get_Type());
 			
 			if(argType != paramType) {
-				throw new SemanticException("Type incorrect pour l'appel de la fonction. ", node.get_LPar());
+				throw new SemanticException("Type incorrect pour l'appel de la fonction, attendu : " + paramType + ", reçu : " + argType, node.get_LPar());
 			}
 			
 		}
-		
 	
-		/*
-		 * VERIFIER TYPE RETOUR DE LA FONCTION
-		 */
 	}
 	
 	@Override
@@ -110,7 +106,7 @@ public class SemanticVerifier extends Walker{
 	public void caseFun(NFun node) {
 		SemanticScope parentScope=currentScope;
 		currentScope=new SemanticScope(null);
-		
+		functionType = ntypeToType(node.get_Type());
 		List<NParam> params = functions.getParamList(node.get_Name());
 		for (NParam param : params) {
 			currentScope.declareVar(param.get_Id(),ntypeToType(param.get_Type()));
@@ -186,14 +182,15 @@ public class SemanticVerifier extends Walker{
 
 	@Override
 	public void caseStmt_Println(NStmt_Println node) {
-		// TODO Auto-generated method stub
 		super.caseStmt_Println(node);
 	}
 
 	@Override
 	public void caseStmt_Return(NStmt_Return node) {
-		// TODO Auto-generated method stub
-		super.caseStmt_Return(node);
+		currentType = evalType(node.get_OptExp());
+		if(currentType != functionType) {
+			throw new SemanticException("La fonction ne retourne pas le bon type " + functionType + " : " + currentType, node.get_Keyword());
+		}
 	}
 
 	@Override
