@@ -13,6 +13,7 @@ public class SemanticVerifier extends Walker{
 	private SemanticScope currentScope;
 	private Type currentType;
 	private Type functionType;
+	private Token functionToken;
 	private Functions functions;
 	private ArrayList<Type> currentArgs;
 	
@@ -107,6 +108,7 @@ public class SemanticVerifier extends Walker{
 		SemanticScope parentScope=currentScope;
 		currentScope=new SemanticScope(null);
 		functionType = ntypeToType(node.get_Type());
+		functionToken = node.get_LPar();
 		List<NParam> params = functions.getParamList(node.get_Name());
 		for (NParam param : params) {
 			currentScope.declareVar(param.get_Id(),ntypeToType(param.get_Type()));
@@ -193,6 +195,22 @@ public class SemanticVerifier extends Walker{
 		}
 	}
 
+	@Override
+	public void caseOptExp_One(NOptExp_One node) {
+		if(functionType == Type.VOID) {
+			throw new SemanticException("Une procédure ne peut pas renvoyer de valeur (return sans expression seulement).", functionToken); 
+		} 			
+		currentType = evalType(node.get_Exp());		
+	}
+	
+	@Override
+	public void caseOptExp_None(NOptExp_None node) {
+		if(functionType != Type.VOID) {
+			throw new SemanticException("Une fonction doit obligatoirement retourner une expression.", functionToken); 
+		}
+		currentType = Type.VOID;
+	}
+	
 	@Override
 	public void caseExp_Eq(NExp_Eq node) {
 		Type leftType = evalType(node.get_Left());
