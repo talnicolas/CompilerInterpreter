@@ -32,7 +32,7 @@
 
 	<target name="run" depends="jar">
 		<mkdir dir="${output.dir}" />
-		<apply executable="java" failonerror="true">
+		<apply executable="java">
 			<fileset dir="${test.dir}" />
 			<arg value="-jar"/>
 			<arg path="${jar.dir}/${main.interpreter}.jar" />
@@ -49,7 +49,7 @@
 			<arg value="-u" />
 			<srcfile />
 			<targetfile />
-			<mapper type="glob" from="*" to="${expected.dir}" />
+			<mapper type="glob" from="*" to="${expected.dir}/" />
 		</apply>
 	</target>
 	

@@ -1,0 +1,23 @@
+int[] agrandi(int[] ancien) {
+  int[] nouveau = new int[size(ancien) + 1];
+  int i = 0;
+  while(i < size(ancien)) {
+    nouveau[i] = ancien[i];
+    i = i + 1;
+  }
+  return nouveau;
+}
+
+{
+  int[] t = new int[0];
+  t = agrandi(t);
+  t[0] = 1;
+  t = agrandi(t);
+  t[1] = 2;
+  int i = 0;
+  while(i < size(t)) {
+    print(t[i]);
+    println();
+    i = i + 1;
+  }
+}

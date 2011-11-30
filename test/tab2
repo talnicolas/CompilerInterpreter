@@ -1,0 +1,10 @@
+{
+  bool[] t = new bool[3];
+  t[1] = true;
+  int i = 0;
+  while(i < size(t)) {
+    print(t[i]);
+    println();
+    i = i + 1;
+  }
+}

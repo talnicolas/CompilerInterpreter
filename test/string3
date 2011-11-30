@@ -1,0 +1,10 @@
+{
+  string s = "This is a string";
+  if(s == "This is " + "a string") {
+    print("OK");
+  }
+  else {
+    print("ERREUR");
+  }
+  println();
+}

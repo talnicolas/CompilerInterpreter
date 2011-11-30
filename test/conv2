@@ -1,0 +1,4 @@
+{
+  print(int("123") + 1);
+  println();
+}

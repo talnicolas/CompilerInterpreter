@@ -1,0 +1,10 @@
+{
+  string s = "123";
+  if(int(s) == 123) {
+    print("OK");
+  }
+  else {
+    print("ERREUR");
+  }
+  println();
+}
