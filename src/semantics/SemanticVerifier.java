@@ -7,6 +7,7 @@ import exception.InternalException;
 import exception.SemanticException;
 
 import tp2.*;
+import tp2.Node.ProductionType;
 
 public class SemanticVerifier extends Walker{
 
@@ -29,7 +30,16 @@ public class SemanticVerifier extends Walker{
 	}
 	
 	@Override
+	/**
+	 * On oblige ici l'utilisateur à récupérer la valeur de retour d'une fonction car si celle-ci n'a pas d'intérêt
+	 * alors cette fonction devrait plutôt être une procédure.
+	 */
 	public void caseStmt_Call(NStmt_Call node) {
+		
+		NFun fun = functions.getFunction(node.get_Id());
+		if(ntypeToType(fun.get_Type()) != Type.VOID){
+			throw new SemanticException("La valeur de retour d'une fonction doit obligatoirement être récupérée.", node.get_LPar());
+		}
 		
 		List<NParam> params = functions.getParamList(node.get_Id());
 		this.currentArgs = new ArrayList<Type>();
@@ -51,10 +61,14 @@ public class SemanticVerifier extends Walker{
 		}
 		
 	}
-
 	
-	@Override
+	@Override	
 	public void caseTerm_Call(NTerm_Call node) {
+				
+		NFun fun = functions.getFunction(node.get_Id());
+		if(ntypeToType(fun.get_Type()) == Type.VOID){
+			throw new SemanticException("Une procédure ne peut être utilisée comme terme d'une instruction (affichage, assignation, ...)", node.get_LPar());
+		}
 		
 		List<NParam> params = functions.getParamList(node.get_Id());
 		
@@ -179,7 +193,7 @@ public class SemanticVerifier extends Walker{
 		currentType = evalType(node.get_Exp());
 		if (currentType!=Type.INT && currentType!=Type.STRING && currentType!=Type.BOOL) {
 			throw new SemanticException("Impossible d'écrire un type : " + currentType.toString(), node.get_LPar());
-		}
+		} 
 	}
 
 	@Override
