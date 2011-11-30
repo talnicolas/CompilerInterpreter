@@ -7,7 +7,6 @@ import exception.InternalException;
 import exception.SemanticException;
 
 import tp2.*;
-import tp2.Node.ProductionType;
 
 public class SemanticVerifier extends Walker{
 
@@ -16,12 +15,14 @@ public class SemanticVerifier extends Walker{
 	private Type functionType;
 	private Token functionToken;
 	private Functions functions;
+	private boolean returnSet;
 	private ArrayList<Type> currentArgs;
 	
 	public SemanticVerifier(Functions fun) {
 		this.functions = fun;
 		currentScope=new SemanticScope(null);
 		currentScope.declareArgs();
+		returnSet = false;
 	}
 
 	Type evalType(Node node) {
@@ -119,6 +120,7 @@ public class SemanticVerifier extends Walker{
 
 	@Override
 	public void caseFun(NFun node) {
+		
 		SemanticScope parentScope=currentScope;
 		currentScope=new SemanticScope(null);
 		functionType = ntypeToType(node.get_Type());
@@ -126,9 +128,13 @@ public class SemanticVerifier extends Walker{
 		List<NParam> params = functions.getParamList(node.get_Name());
 		for (NParam param : params) {
 			currentScope.declareVar(param.get_Id(),ntypeToType(param.get_Type()));
-		}
-		
+		}		
 		walkChildren(node.get_Block());
+		if((ntypeToType(functions.getFunction(node.get_Name()).get_Type()) != Type.VOID) && !returnSet){
+			throw new SemanticException("La fonction suivante ne dispose d'aucun 'return' pour retourner une valeur : " 
+										+ functions.getFunction(node.get_Name()).get_Name().getText(), node.get_LPar());
+		}
+		returnSet = false;
 		currentScope=parentScope;
 		
 	}
@@ -203,6 +209,7 @@ public class SemanticVerifier extends Walker{
 
 	@Override
 	public void caseStmt_Return(NStmt_Return node) {
+		returnSet = true;
 		currentType = evalType(node.get_OptExp());
 		if(currentType != functionType) {
 			throw new SemanticException("La fonction ne retourne pas le bon type " + functionType + " : " + currentType, node.get_Keyword());

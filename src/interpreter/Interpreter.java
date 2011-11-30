@@ -357,6 +357,10 @@ public class Interpreter extends Walker {
 						currentArgs.get(i));
 			}
 			walkChildren(functions.getFunction(node.get_Id()).get_Block());
+			if(!returnSet) {
+				throw new InterpreterException("Aucune valeur n'a été retournée par la fonction lors de l'appel de la fonction : " 
+																			+ functions.getFunction(node.get_Id()).get_Name().getText() + ". ", node.get_LPar());
+			}
 			returnSet = false;
 			currentScope = parentScope;
 		}
