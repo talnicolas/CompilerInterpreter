@@ -16,7 +16,7 @@ int fact(int n) {
   }
   print("le resultat est " + string(i));
   println();
-
+  
   i = 0;
   while(i < size(args)) {
     print(args[i]);

@@ -15,11 +15,13 @@ public class Interpreter extends Walker {
 	private ArrayList<Value> currentArgs;
 	private ExecutionScope currentScope;
 	private Value currentResult;
+	private boolean returnSet;
 
 	public Interpreter(Functions functions, String[] arguments) {
 		this.functions = functions;
 		this.currentScope = new ExecutionScope(null);		
 		this.currentScope.declareArgs(arguments);
+		this.returnSet = false;
 	}
 
 	Value eval(Node node) {
@@ -122,22 +124,27 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseStmt_Return(NStmt_Return node) {
-		currentResult = eval(node.get_OptExp());
+		if(!returnSet) {
+			currentResult = eval(node.get_OptExp());
+			returnSet = true;
+		}
+		
 	}
 
 	@Override
 	public void caseStmt_Call(NStmt_Call node) {
+
 		ExecutionScope parentScope = currentScope;
-		ExecutionScope newScope = new ExecutionScope(parentScope);
+		currentScope = new ExecutionScope(parentScope);
 
 		List<NParam> params = functions.getParamList(node.get_Id());
 		this.currentArgs = new ArrayList<Value>();
 		node.get_Args().applyOnChildren(this);
 
 		for (int i = 0; i < params.size(); i++) {
-			newScope.declareVar(params.get(i).get_Id(), currentArgs.get(i));
+			currentScope.declareVar(params.get(i).get_Id(), currentArgs.get(i));
 		}
-		currentScope = newScope;
+		returnSet = false;
 		walkChildren(functions.getFunction(node.get_Id()).get_Block());
 		currentScope = parentScope;
 	}
@@ -240,8 +247,8 @@ public class Interpreter extends Walker {
 	}
 
 	@Override
-	public void caseExp_Term(NExp_Term node) {
-		currentResult = eval(node.get_Term());
+	public void caseExp_Term(NExp_Term node) {		
+			currentResult = eval(node.get_Term());			
 	}
 
 	@Override
@@ -256,7 +263,7 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseTerm_False(NTerm_False node) {
-		currentResult = BoolValue.TRUE;
+		currentResult = BoolValue.FALSE;
 	}
 
 	@Override
@@ -270,17 +277,19 @@ public class Interpreter extends Walker {
 	}
 
 	@Override
-	public void caseTerm_Call(NTerm_Call node) {
+	public void caseTerm_Call(NTerm_Call node) {	
+
 		ExecutionScope parentScope = currentScope;
 		currentScope = new ExecutionScope(parentScope);
 
 		List<NParam> params = functions.getParamList(node.get_Id());
 		this.currentArgs = new ArrayList<Value>();
 		node.get_Args().applyOnChildren(this);
-
+		
 		for (int i = 0; i < params.size(); i++) {
 			currentScope.declareVar(params.get(i).get_Id(), currentArgs.get(i));
 		}
+		returnSet = false;
 		walkChildren(functions.getFunction(node.get_Id()).get_Block());
 		currentScope = parentScope;
 	}
@@ -342,7 +351,6 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseFun(NFun node) {
-
 	}
 
 	@Override
