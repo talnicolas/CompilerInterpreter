@@ -7,6 +7,18 @@
  int[] tab2 = new int[6];
 
 int yy = tab[2];
+
+print(yy);
+tab[1] = 56;
+print(tab[1]);
+
+bool[] t = new bool[20];
+
+int index=0;
+while (index < size(t)) {
+print(t[index]);
+index=index+1;
+}
  
  if (j==1) {
  j=j+1;
