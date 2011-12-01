@@ -119,6 +119,11 @@ public class SemanticVerifier extends Walker{
 	}
 
 	@Override
+	/**
+	 * ATTENTION: on teste ici qu'une fonction possède au moins un return
+	 * 			  PAR CONTRE
+	 * 			  une procédure n'est pas obligé de contenir un return.
+	 */
 	public void caseFun(NFun node) {
 		
 		SemanticScope parentScope=currentScope;
@@ -141,9 +146,16 @@ public class SemanticVerifier extends Walker{
 
 
 	@Override
+	/**
+	 * 65535 = taille limite des identifiants en Java. On met la limite à 65534 pour pouvoir ajouter le _ lors de la génération du code.
+	 */
 	public void caseStmt_Decl(NStmt_Decl node) {
 		Type declaredType = ntypeToType(node.get_Type());
 		Type exprType = evalType(node.get_Exp());		
+		
+		if(node.get_Id().getText().length() > 65534){
+			throw new SemanticException("Identifiant trop long : " + node.get_Id().getText().substring(0, 15) + "... .", node.get_Op());
+		}
 		
 		if (declaredType!=exprType) {
 			throw new SemanticException("Types incompatibles : " + declaredType + " et " + exprType,node.get_Op());
@@ -429,6 +441,7 @@ public class SemanticVerifier extends Walker{
 	public void caseArg(NArg node) {
 		this.currentArgs.add(evalType(node.get_Exp()));
 	}
+
 
 	@Override
 	public void walk(Node node) {
