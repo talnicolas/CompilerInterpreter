@@ -60,6 +60,7 @@ public class SemanticVerifier extends Walker{
 				throw new SemanticException("Type incorrect pour l'appel de la fonction, attendu : " + paramType + ", reçu : " + argType, node.get_LPar());
 			}		
 		}
+		this.currentType = ntypeToType(fun.get_Type());
 		
 	}
 	
@@ -91,6 +92,7 @@ public class SemanticVerifier extends Walker{
 			}
 			
 		}
+		this.currentType = ntypeToType(fun.get_Type());
 	
 	}
 	
@@ -231,7 +233,7 @@ public class SemanticVerifier extends Walker{
 	@Override
 	public void caseOptExp_One(NOptExp_One node) {
 		if(functionType == Type.VOID) {
-			throw new SemanticException("Une procédure ne peut pas renvoyer de valeur (return sans expression seulement).", functionToken); 
+			throw new SemanticException("Une procédure ne peut pas renvoyer de valeur (return sans expression seulement). ", functionToken); 
 		} 			
 		currentType = evalType(node.get_Exp());		
 	}
@@ -239,7 +241,7 @@ public class SemanticVerifier extends Walker{
 	@Override
 	public void caseOptExp_None(NOptExp_None node) {
 		if(functionType != Type.VOID) {
-			throw new SemanticException("Une fonction doit obligatoirement retourner une expression.", functionToken); 
+			throw new SemanticException("Une fonction doit obligatoirement retourner une expression. ", functionToken); 
 		}
 		currentType = Type.VOID;
 	}
@@ -252,7 +254,7 @@ public class SemanticVerifier extends Walker{
 		if (!(leftType == Type.STRING && rightType == Type.STRING) &&
 			!(leftType == Type.BOOL && rightType == Type.BOOL) &&
 			!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible de comparer ce genre de types: " + leftType +" et " + rightType,node.get_Op());
+			throw new SemanticException("Impossible de comparer ce genre de types: " + leftType +" et " + rightType + ". ",node.get_Op());
 		}
 		currentType=Type.BOOL;
 	}
@@ -263,7 +265,7 @@ public class SemanticVerifier extends Walker{
 		Type rightType = evalType(node.get_Right());
 		
 		if (!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible de comparer ce genre de types: " + node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible de comparer ce genre de types: " + leftType +" et " + rightType + ". ",node.get_Op());
 		}
 		
 		currentType=Type.BOOL;
@@ -276,7 +278,7 @@ public class SemanticVerifier extends Walker{
 		
 		if (!(leftType == Type.STRING && rightType == Type.STRING) &&
 			!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible d'additionner ce genre de types: " + leftType + rightType,node.get_Op());
+			throw new SemanticException("Impossible d'additionner ce genre de types: " + leftType +" et " + rightType + ". ",node.get_Op());
 		}
 		currentType=leftType;
 	}
@@ -288,7 +290,7 @@ public class SemanticVerifier extends Walker{
 		Type rightType = evalType(node.get_Right());
 		
 		if (!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible de soustraire ce genre de types: " + node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible de soustraire ce genre de types: " + leftType +" et " + rightType + ". ",node.get_Op());
 		}
 		currentType=leftType;
 	}
@@ -299,7 +301,7 @@ public class SemanticVerifier extends Walker{
 		Type rightType = evalType(node.get_Right());
 		
 		if (!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible de multiplier ce genre de types: " + node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible de multiplier ce genre de types: " + leftType +" et " + rightType + ". ",node.get_Op());
 		}
 		currentType=leftType;
 	}
@@ -310,7 +312,7 @@ public class SemanticVerifier extends Walker{
 		Type rightType = evalType(node.get_Right());
 		
 		if (!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible de diviser ce genre de types: " + node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible de diviser ce genre de types: " + leftType +" et " + rightType + ". ",node.get_Op());
 		}	
 		currentType=leftType;
 	}
@@ -321,7 +323,7 @@ public class SemanticVerifier extends Walker{
 		Type rightType = evalType(node.get_Right());
 		
 		if (!(leftType == Type.INT && rightType == Type.INT)) {
-			throw new SemanticException("Impossible de comparer ce genre de types: " + node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible de comparer ce genre de types: " + leftType +" et " + rightType + ". ",node.get_Op());
 		}
 		
 		currentType=Type.BOOL;
@@ -331,7 +333,7 @@ public class SemanticVerifier extends Walker{
 	public void caseExp_Neg(NExp_Neg node) {
 		Type termType = evalType(node.get_Term());	
 		if (termType != Type.INT) {
-			throw new SemanticException("Impossible d'appliquer le négatif de ce type: " + node.get_Op().toString(),node.get_Op());
+			throw new SemanticException("Impossible d'appliquer le négatif de ce type: " + termType + ". ",node.get_Op());
 		}
 		currentType=termType;
 }
@@ -372,7 +374,7 @@ public class SemanticVerifier extends Walker{
 		Type exprType = evalType(node.get_Exp());
 		
 		if (exprType!=Type.INT ){
-			throw new SemanticException("L'index n'est pas de type int : "+exprType,node.get_LBracket());
+			throw new SemanticException("L'index n'est pas de type int : "+exprType + ". ",node.get_LBracket());
 		}
 		
 		if (arrayType==Type.BOOL_ARRAY) currentType=Type.BOOL;
