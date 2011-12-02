@@ -11,8 +11,7 @@ public class CodeGenerator extends Walker {
 	private Functions functions;
 	private List<NFun> funs;
 	private int currentIndent = 0;
-	private boolean flagElse = false;
-	
+	private boolean flagElse = false;	
 	private static final int INDENTSIZE = 4;
 	
 	public CodeGenerator(Functions functions) {
@@ -26,8 +25,7 @@ public class CodeGenerator extends Walker {
 		System.out.println();
 		indent();
 		System.out.println(getIndent() + "public static void main(String[] args) {");
-		System.out.println();
-		
+		System.out.println();		
 		node.get_Block().apply(this);
 		System.out.println(getIndent() + "}");
 		System.out.println();
@@ -58,8 +56,7 @@ public class CodeGenerator extends Walker {
 		indent();
 		node.applyOnChildren(this);
 		unindent();
-	}
-	
+	}	
 	
 	@Override
 	public void caseString(NString node) {
@@ -90,7 +87,6 @@ public class CodeGenerator extends Walker {
 		System.out.print("");
 	}
 	
-
 	@Override
 	public void caseType_Int(NType_Int node) {
 		System.out.print("int");
@@ -368,8 +364,7 @@ public class CodeGenerator extends Walker {
 	public void caseStmt_Print(NStmt_Print node) {
 		System.out.print(getIndent() + "System.out.print(");
 		node.get_Exp().apply(this);
-		System.out.println(");");
-		
+		System.out.println(");");		
 	}
 	
 	@Override
@@ -476,4 +471,3 @@ public class CodeGenerator extends Walker {
 		return res;
 	}
 }
-

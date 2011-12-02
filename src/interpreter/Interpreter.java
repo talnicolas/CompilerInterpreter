@@ -80,19 +80,15 @@ public class Interpreter extends Walker {
 	@Override
 	public void caseStmt_ArrayAssign(NStmt_ArrayAssign node) {
 		if (!returnSet) {
-
 			Type typeArray = currentScope.getValue(node.get_Id()).getType();
 			int index = ((IntValue) eval(node.get_Index())).getValue();
-
 			if (typeArray == Type.BOOL_ARRAY) {
 				BoolArrayValue arrayTmp = (BoolArrayValue) currentScope
 						.getValue(node.get_Id());
 				boolean valueToSet = ((BoolValue) eval(node.get_Exp()))
 						.getValue();
 				arrayTmp.set(index, valueToSet, node.get_Op());
-			}
-
-			else if (typeArray == Type.INT_ARRAY) {
+			} else if (typeArray == Type.INT_ARRAY) {
 				IntArrayValue arrayTmp = (IntArrayValue) currentScope
 						.getValue(node.get_Id());
 				int valueToSet = ((IntValue) eval(node.get_Exp())).getValue();
@@ -105,19 +101,15 @@ public class Interpreter extends Walker {
 				arrayTmp.set(index, valueToSet, node.get_Op());
 			}
 		}
-
 	}
 
 	@Override
 	public void caseStmt_If(NStmt_If node) {
-
 		if (!returnSet) {
 			currentResult = eval(node.get_Exp());
 			if (currentResult == BoolValue.TRUE) {
 				walkChildren(node.get_Block());
-			}
-
-			else if (currentResult == BoolValue.FALSE
+			} else if (currentResult == BoolValue.FALSE
 					&& node.get_OptElse() != null) {
 				walkChildren(node.get_OptElse());
 			}
@@ -137,7 +129,6 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseStmt_Print(NStmt_Print node) {
-
 		if (!returnSet) {
 			currentResult = eval(node.get_Exp());
 			System.out.print(currentResult);
@@ -146,13 +137,25 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseStmt_Println(NStmt_Println node) {
-
 		if (!returnSet) {
 			System.out.println();
 		}
 	}
 
 	@Override
+	/**
+	 * Le choix a été fait ici de ne pas utiliser la technique visant à lancer une exception lorsque
+	 * l'interpreteur rencontre un return. Les exceptions servant à gérer les erreurs et les compor-
+	 * tements non-désirés d'un programme, un return ne tombe donc sous aucun de ces cas.
+	 * 
+	 * Il a été choisi à la place d'utiliser un booléen qui passera à true lorsqu'un return sera ren-
+	 * contré. Ainsi les instructions se trouvant à la suite du return seront visitées mais pas trai-
+	 * tées, c'est à dire qu'elles ne modifieront pas le programme. Le booléen sera remis à false 
+	 * lorsque l'interpréteur sera sorti de la fonction (ou de la procédure).
+	 * 
+	 * Ce choix implique une moins bonne performance et plus de lignes de code, mais est plus appro-
+	 * prié (théoriquement, presque "éthiquement") dans cette situation. 
+	 */
 	public void caseStmt_Return(NStmt_Return node) {
 		if (!returnSet) {
 			currentResult = eval(node.get_OptExp());
@@ -164,10 +167,8 @@ public class Interpreter extends Walker {
 	@Override
 	public void caseStmt_Call(NStmt_Call node) {
 		if (!returnSet) {
-
 			ExecutionScope parentScope = currentScope;
 			currentScope = new ExecutionScope(parentScope);
-
 			List<NParam> params = functions.getParamList(node.get_Id());
 			this.currentArgs = new ArrayList<Value>();
 			node.get_Args().applyOnChildren(this);
@@ -184,62 +185,51 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseExp_Eq(NExp_Eq node) {
-
 		if (!returnSet) {
 			if (eval(node.get_Left()).getType() == Type.INT) {
-
 				IntValue leftExp = (IntValue) eval(node.get_Left());
 				IntValue rightExp = (IntValue) eval(node.get_Right());
-
-				if (leftExp.getValue() == rightExp.getValue())
+				if (leftExp.getValue() == rightExp.getValue()) {
 					currentResult = BoolValue.TRUE;
-				else
+				} else {
 					currentResult = BoolValue.FALSE;
-			}
-
-			else {
+				}
+			} else {
 				StringValue rightExp = (StringValue) eval(node.get_Right());
 				StringValue leftExp = (StringValue) eval(node.get_Left());
-				if (leftExp.getValue().equals(rightExp.getValue()))
+				if (leftExp.getValue().equals(rightExp.getValue())) {
 					currentResult = BoolValue.TRUE;
-				else
+				} else {
 					currentResult = BoolValue.FALSE;
+				}
 			}
 		}
-
 	}
 
 	@Override
 	public void caseExp_Lt(NExp_Lt node) {
-
 		if (!returnSet) {
 			IntValue leftExp = (IntValue) eval(node.get_Left());
 			IntValue rightExp = (IntValue) eval(node.get_Right());
-
 			if (leftExp.getValue() < rightExp.getValue())
 				currentResult = BoolValue.TRUE;
 			else
 				currentResult = BoolValue.FALSE;
 		}
-
 	}
 
 	@Override
 	public void caseExp_Add(NExp_Add node) {
 		if (!returnSet) {
 			if (eval(node.get_Left()).getType() == Type.INT) {
-
 				IntValue leftExp = (IntValue) eval(node.get_Left());
 				IntValue rightExp = (IntValue) eval(node.get_Right());
 
 				currentResult = new IntValue(leftExp.getValue()
 						+ rightExp.getValue());
-			}
-
-			else {
+			} else {
 				StringValue rightExp = (StringValue) eval(node.get_Right());
 				StringValue leftExp = (StringValue) eval(node.get_Left());
-
 				currentResult = new StringValue(leftExp.getValue()
 						+ rightExp.getValue());
 			}
@@ -301,7 +291,6 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseExp_Term(NExp_Term node) {
-
 		if (!returnSet) {
 			currentResult = eval(node.get_Term());
 		}
@@ -344,15 +333,12 @@ public class Interpreter extends Walker {
 
 	@Override
 	public void caseTerm_Call(NTerm_Call node) {
-
 		if (!returnSet) {
 			ExecutionScope parentScope = currentScope;
 			currentScope = new ExecutionScope(parentScope);
-
 			List<NParam> params = functions.getParamList(node.get_Id());
 			this.currentArgs = new ArrayList<Value>();
 			node.get_Args().applyOnChildren(this);
-
 			for (int i = 0; i < params.size(); i++) {
 				currentScope.declareVar(params.get(i).get_Id(),
 						currentArgs.get(i));
@@ -372,7 +358,6 @@ public class Interpreter extends Walker {
 		if (!returnSet) {
 			Type tArray = currentScope.getValue(node.get_Id()).getType();
 			int index = ((IntValue) eval(node.get_Exp())).getValue();
-
 			if (tArray == Type.BOOL_ARRAY) {
 				BoolArrayValue arrayTmp = (BoolArrayValue) currentScope
 						.getValue(node.get_Id());
@@ -431,11 +416,9 @@ public class Interpreter extends Walker {
 			}
 		}
 	}
-
 	@Override
 	public void caseFun(NFun node) {
 	}
-
 	@Override
 	public void caseTerm_NewStringArray(NTerm_NewStringArray node) {
 		if (!returnSet) {
@@ -458,10 +441,8 @@ public class Interpreter extends Walker {
 	public void caseTerm_IntConversion(NTerm_IntConversion node) {
 		if (!returnSet) {
 			currentResult = eval(node.get_Exp());
-
 			if (currentResult.getType() == Type.STRING) {
 				String value = ((StringValue) currentResult).getValue();
-
 				try {
 					currentResult = new IntValue(Integer.parseInt(value));
 				} catch (NumberFormatException ex) {
@@ -477,13 +458,10 @@ public class Interpreter extends Walker {
 	public void caseTerm_StringConversion(NTerm_StringConversion node) {
 		if (!returnSet) {
 			currentResult = eval(node.get_Exp());
-
 			if (currentResult.getType() == Type.INT) {
 				int value = ((IntValue) currentResult).getValue();
 				currentResult = new StringValue(String.valueOf(value));
-			}
-
-			else if (currentResult.getType() == Type.BOOL) {
+			} else if (currentResult.getType() == Type.BOOL) {
 				boolean value = ((BoolValue) currentResult).getValue();
 				if (value) {
 					currentResult = new StringValue("true");
@@ -517,6 +495,5 @@ public class Interpreter extends Walker {
 		if (!returnSet) {
 			this.currentArgs.add(eval(node.get_Exp()));
 		}
-	}
-	
+	}	
 }
