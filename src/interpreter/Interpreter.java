@@ -186,7 +186,8 @@ public class Interpreter extends Walker {
 	@Override
 	public void caseExp_Eq(NExp_Eq node) {
 		if (!returnSet) {
-			if (eval(node.get_Left()).getType() == Type.INT) {
+			Type expType = eval(node.get_Left()).getType();
+			if (expType == Type.INT) {
 				IntValue leftExp = (IntValue) eval(node.get_Left());
 				IntValue rightExp = (IntValue) eval(node.get_Right());
 				if (leftExp.getValue() == rightExp.getValue()) {
@@ -194,6 +195,15 @@ public class Interpreter extends Walker {
 				} else {
 					currentResult = BoolValue.FALSE;
 				}
+			} else if (expType == Type.BOOL) {
+				BoolValue leftExp = (BoolValue) eval(node.get_Left());
+				BoolValue rightExp = (BoolValue) eval(node.get_Right());
+				if (leftExp.getValue() == rightExp.getValue()) {
+					currentResult = BoolValue.TRUE;
+				} else {
+					currentResult = BoolValue.FALSE;
+				}
+			
 			} else {
 				StringValue rightExp = (StringValue) eval(node.get_Right());
 				StringValue leftExp = (StringValue) eval(node.get_Left());

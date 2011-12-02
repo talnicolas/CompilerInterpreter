@@ -12,6 +12,7 @@ public class CodeGenerator extends Walker {
 	private List<NFun> funs;
 	private int currentIndent = 0;
 	private boolean flagElse = false;	
+	private boolean stringType = false;
 	private static final int INDENTSIZE = 4;
 	
 	public CodeGenerator(Functions functions) {
@@ -65,7 +66,10 @@ public class CodeGenerator extends Walker {
 	
 	@Override
 	public void caseId(NId node) {
-		System.out.print("_" + node.getText());
+		if(!node.getText().equals("args"))
+			System.out.print("_");
+		System.out.print(node.getText());
+		
 	}
 
 	@Override
@@ -89,36 +93,43 @@ public class CodeGenerator extends Walker {
 	
 	@Override
 	public void caseType_Int(NType_Int node) {
+		stringType = false;
 		System.out.print("int");
 	}
 
 	@Override
 	public void caseType_Bool(NType_Bool node) {
+		stringType = false;
 		System.out.print("boolean");
 	}
 
 	@Override
 	public void caseType_String(NType_String node) {
+		stringType = true;
 		System.out.print("String");
 	}
 
 	@Override
 	public void caseType_IntArray(NType_IntArray node) {
+		stringType = false;
 		System.out.print("int[]");
 	}
 
 	@Override
 	public void caseType_BoolArray(NType_BoolArray node) {
+		stringType = false;
 		System.out.print("boolean[]");
 	}
 
 	@Override
 	public void caseType_StringArray(NType_StringArray node) {
+		stringType = false;
 		System.out.print("String[]");
 	}
 
 	@Override
 	public void caseType_Void(NType_Void node) {
+		stringType = false;
 		System.out.print("void");
 	}
 	
@@ -200,8 +211,15 @@ public class CodeGenerator extends Walker {
 	@Override
 	public void caseExp_Eq(NExp_Eq node) {
 		node.get_Left().apply(this);
-		System.out.print(" == ");
+		if(!stringType) {
+			System.out.print(" == "); 
+		} else {
+			System.out.print(".equals("); 
+		}
 		node.get_Right().apply(this);
+		if(stringType){
+			System.out.print(")");
+		}
 	}
 
 	@Override
