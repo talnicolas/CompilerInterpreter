@@ -11,8 +11,8 @@ public class CodeGenerator extends Walker {
 	private Functions functions;
 	private List<NFun> funs;
 	private int currentIndent = 0;
-	private boolean flagElse = false;	
-	private boolean stringType = false;
+	private boolean flagElse = false;
+	private boolean flagEquals = false;
 	private static final int INDENTSIZE = 4;
 	
 	public CodeGenerator(Functions functions) {
@@ -31,6 +31,9 @@ public class CodeGenerator extends Walker {
 		System.out.println(getIndent() + "}");
 		System.out.println();
 		printFuns();
+		if(flagEquals){
+			printEqualFunctions();
+		}
 		System.out.println("}");
 	}
 	
@@ -46,6 +49,24 @@ public class CodeGenerator extends Walker {
 			fun.get_Block().apply(this);
 			System.out.println(getIndent() + "}");
 			System.out.println();
+		}
+	}
+	
+	private void printEqualFunctions() {
+		
+		String[] types = {"int", "boolean", "String"};
+		for(String type : types) {
+			System.out.print(getIndent() + "private static boolean ");
+			System.out.println("eq(" + type + " a, " + type + " b) {");
+			if(!type.equals("String")){
+				indent();
+				System.out.print(getIndent() + "return a == b;");
+			} else {
+				indent();
+				System.out.print(getIndent() + "return a.equals(b);");
+			}
+			unindent();
+			System.out.println("}\n");
 		}
 	}
 	
@@ -93,43 +114,36 @@ public class CodeGenerator extends Walker {
 	
 	@Override
 	public void caseType_Int(NType_Int node) {
-		stringType = false;
 		System.out.print("int");
 	}
 
 	@Override
 	public void caseType_Bool(NType_Bool node) {
-		stringType = false;
 		System.out.print("boolean");
 	}
 
 	@Override
 	public void caseType_String(NType_String node) {
-		stringType = true;
 		System.out.print("String");
 	}
 
 	@Override
 	public void caseType_IntArray(NType_IntArray node) {
-		stringType = false;
 		System.out.print("int[]");
 	}
 
 	@Override
 	public void caseType_BoolArray(NType_BoolArray node) {
-		stringType = false;
 		System.out.print("boolean[]");
 	}
 
 	@Override
 	public void caseType_StringArray(NType_StringArray node) {
-		stringType = false;
 		System.out.print("String[]");
 	}
 
 	@Override
 	public void caseType_Void(NType_Void node) {
-		stringType = false;
 		System.out.print("void");
 	}
 	
@@ -210,16 +224,12 @@ public class CodeGenerator extends Walker {
 
 	@Override
 	public void caseExp_Eq(NExp_Eq node) {
+		flagEquals = true;
+		System.out.print("eq(");
 		node.get_Left().apply(this);
-		if(!stringType) {
-			System.out.print(" == "); 
-		} else {
-			System.out.print(".equals("); 
-		}
+		System.out.print(", ");
 		node.get_Right().apply(this);
-		if(stringType){
-			System.out.print(")");
-		}
+		System.out.print(")");
 	}
 
 	@Override
