@@ -60,13 +60,13 @@ public class CodeGenerator extends Walker {
 			System.out.println("eq(" + type + " a, " + type + " b) {");
 			if(!type.equals("String")){
 				indent();
-				System.out.print(getIndent() + "return a == b;");
+				System.out.println(getIndent() + "return a == b;");
 			} else {
 				indent();
-				System.out.print(getIndent() + "return a.equals(b);");
+				System.out.println(getIndent() + "return a.equals(b);");
 			}
 			unindent();
-			System.out.println("}\n");
+			System.out.println(getIndent() + "}\n");
 		}
 	}
 	
