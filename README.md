@@ -3,7 +3,7 @@ Compiler - Interpreter
 
 Parser generator: SableCC (http://sablecc.org/)
 
-The objective is this work is to write an interpreter and a compiler for a language (MiniLang++) that support strings, arrays, functions and procedures (with or without parameters), type conversion and command line parameters.
+The objective of this work is to write an interpreter and a compiler for a language (MiniLang++) that support strings, arrays, functions and procedures (with or without parameters), type conversion and command line parameters.
 
 The grammar of the language is available in the folder "grammar".
 
